@@ -3,6 +3,10 @@
 #include "ticket_service.hpp"
 
 namespace SkiPass {
+    std::shared_ptr<CLIController> InMemoryAppBuilder::build_controller(std::shared_ptr<TicketService> service) {
+        return std::make_shared<CLIController>(service);
+    }
+
     std::shared_ptr<TicketService> InMemoryAppBuilder::build_service(std::shared_ptr<ITicketRepository> repository) {
         return std::make_shared<TicketService>(repository);
     }
