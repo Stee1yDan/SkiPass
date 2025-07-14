@@ -1,0 +1,37 @@
+#pragma once
+
+#include <memory>
+
+namespace SkiPass {
+
+    class ITicket {
+    public:
+
+        enum class TicketType {
+            UNLIMITED,
+            TEMPORARY,
+            LIMITED,
+            SERVICE
+        };
+
+        using ticket_type_t = ITicket::TicketType;
+
+        using gender_t = std::string;
+
+        using extension_unit_t = long long;
+
+        virtual bool pass() = 0;
+        virtual bool can_pass() = 0;
+
+        [[nodiscard]] virtual bool extend_ticket(extension_unit_t value) = 0;
+
+        [[nodiscard]] virtual std::string get_balance() = 0;
+
+        [[nodiscard]] virtual std::string get_info() const = 0;
+
+        [[nodiscard]] virtual std::shared_ptr<ITicket> clone() const = 0;
+
+        virtual ~ITicket() = default;
+    };
+
+}
