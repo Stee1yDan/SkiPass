@@ -6,7 +6,6 @@
 namespace SkiPass {
 
     std::unique_ptr<ITicketRepository> InMemoryAppBuilder::build_repository() {
-        repository_ = std::make_unique<InMemoryTicketRepository>();
-        return std::move(repository_);
+        return std::make_unique<InMemoryTicketRepository>();
     }
 }

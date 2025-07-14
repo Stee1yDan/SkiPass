@@ -4,7 +4,6 @@
 #include <format>
 
 namespace SkiPass {
-
     InMemoryTicketRepository::ticket_id_t InMemoryTicketRepository::increment_ticket_id() {
         ticket_id_t_++;
         return ticket_id_t_;
@@ -12,7 +11,7 @@ namespace SkiPass {
 
     InMemoryTicketRepository::ticket_id_t InMemoryTicketRepository::add_ticket(std::shared_ptr<ITicket> ticket) {
         auto id = ticket_id_t_++;
-        tickets_[ticket_id_t_] = ticket;
+        tickets_[id] = ticket;
         return ticket_id_t_;
     }
 

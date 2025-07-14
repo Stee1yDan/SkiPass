@@ -7,15 +7,6 @@ namespace SkiPass {
     class ITicket {
     public:
 
-        enum class TicketType {
-            UNLIMITED,
-            TEMPORARY,
-            LIMITED,
-            SERVICE
-        };
-
-        using ticket_type_t = ITicket::TicketType;
-
         using gender_t = std::string;
 
         using extension_unit_t = long long;

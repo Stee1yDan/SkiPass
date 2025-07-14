@@ -22,10 +22,9 @@ namespace SkiPass {
     }
 
     std::shared_ptr<ITicket> UnlimitedTicket::clone() const {
-        auto new_ticket = std::make_shared<UnlimitedTicket>(full_name, age, full_name, ticket_type);
+        auto new_ticket = std::make_shared<UnlimitedTicket>(full_name, age, gender, ticket_type);
         return new_ticket;
     }
 
-    UnlimitedTicket::~UnlimitedTicket() {
-    }
+    UnlimitedTicket::~UnlimitedTicket() {};
 }
