@@ -1,3 +1,5 @@
+#pragma once
+
 #include "app_builder.hpp"
 
 namespace SkiPass {
@@ -6,9 +8,14 @@ namespace SkiPass {
         public:
             InMemoryAppBuilder() = default;
 
+            std::unique_ptr<TicketService> service_;
             std::unique_ptr<ITicketRepository> repository_;
 
-            std::unique_ptr<ITicketRepository> build_repository() override;
+            std::shared_ptr<TicketService> build_service(std::shared_ptr<ITicketRepository> repository) override;
+
+            std::shared_ptr<ITicketRepository> build_repository() override;
+
+            ~InMemoryAppBuilder() override;
 
         private:
 

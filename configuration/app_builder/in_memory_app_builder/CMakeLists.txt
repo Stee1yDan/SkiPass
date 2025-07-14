@@ -9,6 +9,7 @@ target_include_directories(in_memory_app_builder PUBLIC include)
 
 target_link_libraries(in_memory_app_builder PUBLIC
         abstract_app_builder
+        ticket_service
         ticket_repository
         in_memory_ticket_repository
 )

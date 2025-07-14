@@ -12,11 +12,12 @@
 namespace SkiPass {
     int SkiPassApp::run(int argc, char const *argv[]) {
         auto builder = load(argc, argv);
-        auto ticket_repository = builder->build_repository();
+        std::shared_ptr<ITicketRepository> ticket_repository = builder->build_repository();
+        std::shared_ptr<TicketService> ticket_service = builder->build_service(ticket_repository);
         auto ticket1 = std::make_shared<UnlimitedTicket>("fio",21,"M", AbstractTicket::TicketType::UNLIMITED);
         auto ticket2 = std::make_shared<UnlimitedTicket>("fio",22,"M", AbstractTicket::TicketType::UNLIMITED);
-        ticket_repository->add_ticket(ticket1);
-        ticket_repository->add_ticket(ticket2);
+        ticket_service->add_ticket(ticket1);
+        ticket_service->add_ticket(ticket2);
         std::cout << "SkiPassApp::run" << std::endl;
         std::cout << ticket_repository->increment_ticket_id() << std::endl;
         return 0;

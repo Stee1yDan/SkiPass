@@ -13,6 +13,7 @@ target_link_libraries(skipass PUBLIC
         ticket
         abstract_ticket
         unlimited_ticket
+        ticket_service
         skipass_app
         abstract_app_builder
         in_memory_app_builder
