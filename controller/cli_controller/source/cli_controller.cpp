@@ -25,12 +25,14 @@ namespace SkiPass {
         while (true) {
             std::cout << "\nBanking System Menu:\n"
                       << "1. Create Ticket\n"
+                      << "2. Show Balance\n"
                       << "7. Exit\n";
 
             int choice = get_input<int>("Enter choice: ");
 
             switch (choice) {
                 case 1: on_create_ticket(); break;
+                case 2: on_check_balance(); break;
                 case 7: return;
                 //default: view_.show_error("Invalid choice"); break;
             }
@@ -57,6 +59,14 @@ namespace SkiPass {
     }
 
     void CLIController::on_check_balance() {
+        try {
+            auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
+            auto ticket = service_->get_ticket(ticket_id);
+            std::cout << ticket->get()->get_balance()<< std::endl;
+        }
+        catch (const std::exception& e) {
+
+        }
     }
 
     template<typename T>T CLIController::get_input(const std::string &prompt) {
@@ -86,6 +96,6 @@ namespace SkiPass {
         auto name = get_input<std::string>("Enter your name: ");
         auto age = get_input<unsigned>("Enter your age: ");
         auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
-        return std::make_shared<UnlimitedTicket>(name,age,gender,AbstractTicket::TicketType::UNLIMITED);
+        return std::make_shared<UnlimitedTicket>(0,name,age,gender,AbstractTicket::TicketType::UNLIMITED);
     }
 }

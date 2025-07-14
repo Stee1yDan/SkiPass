@@ -2,11 +2,13 @@
 
 #include <abstract_ticket_repository.hpp>
 #include <ticket.hpp>
+#include <abstract_ticket.hpp>
 
 #include <optional>
 #include <random>
 #include <map>
 #include <limits>
+
 
 
 namespace SkiPass
@@ -60,6 +62,7 @@ namespace SkiPass
         TicketService(ITicketRepository &repository);
 
         [[nodiscard]] std::optional<std::shared_ptr<ITicket>> add_ticket(std::shared_ptr<ITicket> ticket);
+        [[nodiscard]] std::optional<std::shared_ptr<ITicket>> get_ticket(AbstractTicket::ticket_id_t id);
 
 
     private:

@@ -9,11 +9,12 @@ namespace SkiPass {
 
         bool can_pass() override;
 
-        UnlimitedTicket(const std::string &full_name,
+        UnlimitedTicket(ticket_id_t id,
+                        const std::string &full_name,
                         unsigned age,
                         const gender_t &gender,
                         ticket_type_t ticket_type)
-            : AbstractTicket(full_name, age, gender, TicketType::UNLIMITED) {}
+            : AbstractTicket(id, full_name, age, gender, TicketType::UNLIMITED) {}
 
         [[nodiscard]] bool extend_ticket(extension_unit_t value) override;
 

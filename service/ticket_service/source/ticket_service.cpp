@@ -9,4 +9,9 @@ namespace SkiPass {
         repository_->add_ticket(ticket);
         return ticket;
     }
+
+
+    std::optional<std::shared_ptr<ITicket>> TicketService::get_ticket(AbstractTicket::ticket_id_t id) {
+        return repository_->get_ticket(id);
+    }
 }

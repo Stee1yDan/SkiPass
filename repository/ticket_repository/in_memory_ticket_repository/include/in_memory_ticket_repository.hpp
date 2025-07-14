@@ -14,6 +14,8 @@ namespace SkiPass {
 
         ticket_id_t add_ticket(std::shared_ptr<ITicket> account) override;
 
+        std::shared_ptr<ITicket> get_ticket(ticket_id_t id) override;
+
         ticket_id_t increment_ticket_id() override;
 
         std::unordered_map<ticket_id_t, std::shared_ptr<ITicket>> tickets_;

@@ -15,6 +15,10 @@ namespace SkiPass {
         return ticket_id_t_;
     }
 
+    std::shared_ptr<ITicket> InMemoryTicketRepository::get_ticket(ticket_id_t id) {
+        return tickets_[id];
+    }
+
     std::vector<std::shared_ptr<ITicket>> InMemoryTicketRepository::get_all() {
         auto value_view = std::views::values(tickets_);
         return std::vector<std::shared_ptr<ITicket>>{value_view.begin(), value_view.end()};
