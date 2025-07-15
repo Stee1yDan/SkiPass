@@ -10,4 +10,5 @@ target_link_libraries(cli_controller PUBLIC
         ticket
         ticket_service
         unlimited_ticket
-        controller)
+        controller
+        view)

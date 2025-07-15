@@ -10,8 +10,9 @@
 
 namespace SkiPass {
 
-    CLIController::CLIController(std::shared_ptr<TicketService> service) {
+    CLIController::CLIController(std::shared_ptr<TicketService> service, std::shared_ptr<IView> view) {
         service_ = service;
+        view_ = view;
     };
 
     CLIController::~CLIController() = default;
@@ -62,7 +63,7 @@ namespace SkiPass {
         try {
             auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
             auto ticket = service_->get_ticket(ticket_id);
-            std::cout << ticket->get()->get_balance()<< std::endl;
+            view_->show_balance(ticket.value());
         }
         catch (const std::exception& e) {
 

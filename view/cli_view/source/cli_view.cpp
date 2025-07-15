@@ -4,8 +4,7 @@
 #include <iostream>
 
 namespace SkiPass {
-    CLIView::~CLIView() {
-    }
+    CLIView::~CLIView() = default;
 
     void CLIView::show_balance(std::shared_ptr<ITicket> ticket) {
         std::cout << "Current balance: " << ticket->get_balance() << std::endl;

@@ -23,7 +23,8 @@ namespace SkiPass {
     }
 
     ~AbstractTicket() override;
-        ticket_id_t id;
+
+    ticket_id_t id;
         std::string full_name;
         unsigned age;
         gender_t gender;

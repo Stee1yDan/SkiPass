@@ -13,8 +13,9 @@ namespace SkiPass {
     int SkiPassApp::run(int argc, char const *argv[]) {
         auto builder = load(argc, argv);
         std::shared_ptr<ITicketRepository> ticket_repository = builder->build_repository();
+        std::shared_ptr<IView> view = builder->build_view();
         std::shared_ptr<TicketService> ticket_service = builder->build_service(ticket_repository);
-        std::shared_ptr<CLIController> cli_controller = builder->build_controller(ticket_service);
+        std::shared_ptr<IController> cli_controller = builder->build_controller(ticket_service,view);
         // auto ticket1 = std::make_shared<UnlimitedTicket>("fio",21,"M", AbstractTicket::TicketType::UNLIMITED);
         // auto ticket2 = std::make_shared<UnlimitedTicket>("fio",22,"M", AbstractTicket::TicketType::UNLIMITED);
         // ticket_service->add_ticket(ticket1);
