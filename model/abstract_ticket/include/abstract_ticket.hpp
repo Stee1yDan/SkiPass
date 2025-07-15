@@ -1,5 +1,6 @@
 #pragma once
 #include "ticket.hpp"
+#include <iostream>
 
 namespace SkiPass {
     class AbstractTicket : public ITicket {
@@ -12,7 +13,6 @@ namespace SkiPass {
         SERVICE};
 
     using ticket_type_t = TicketType;
-    using ticket_id_t = unsigned int;
 
     AbstractTicket(ticket_id_t id,const std::string &full_name, unsigned age, const gender_t &gender, ticket_type_t ticket_type)
         : id(id),
@@ -29,4 +29,5 @@ namespace SkiPass {
         gender_t gender;
         ticket_type_t ticket_type;
     };
+    std::ostream& operator<<(std::ostream& os, AbstractTicket::TicketType ticket);
 }

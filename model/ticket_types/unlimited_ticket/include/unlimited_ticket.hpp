@@ -18,9 +18,9 @@ namespace SkiPass {
 
         [[nodiscard]] bool extend_ticket(extension_unit_t value) override;
 
-        [[nodiscard]] std::string get_balance() override;
+        [[nodiscard]] balance_unit_t get_balance() override;
 
-        [[nodiscard]] std::string get_info() const override;
+        [[nodiscard]] balance_unit_t get_info() const override;
 
         [[nodiscard]] std::shared_ptr<ITicket> clone() const override;
 

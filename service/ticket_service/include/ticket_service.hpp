@@ -20,6 +20,15 @@ namespace SkiPass
 
         using ticket_id_t = ITicketRepository::ticket_id_t;
 
+        struct TicketInfo {
+            std::string username;
+            AbstractTicket::gender_t gender;
+            unsigned age;
+            AbstractTicket::ticket_id_t ticket_id;
+            AbstractTicket::ticket_type_t ticket_type;
+            AbstractTicket::balance_unit_t balance_unit;
+        };
+
         enum class pass_operation_status {
             success,
             ticket_expired,

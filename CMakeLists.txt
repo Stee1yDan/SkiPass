@@ -9,4 +9,5 @@ add_subdirectory(controller)
 add_subdirectory(model)
 add_subdirectory(repository)
 add_subdirectory(service)
+add_subdirectory(view)
 
