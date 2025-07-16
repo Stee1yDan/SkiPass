@@ -45,7 +45,7 @@ namespace SkiPass {
             auto ticket_type = get_input<std::string>("Enter account type: ");
             std::shared_ptr<AbstractTicket> ticket = ticket_types.at(ticket_type)(*this);
             auto saved_ticket = service_->add_ticket(ticket);
-            std::cout << ticket->id<< std::endl;
+            std::cout << saved_ticket->ticket_type<< std::endl;
             view_->show_ticket_info(service_->get_ticket_info_struct(saved_ticket));
         } catch (const std::exception& e) {
             //view_.show_error(std::string("Error: ") + e.what());

@@ -18,7 +18,7 @@ namespace SkiPass {
         ticket_info.full_name = ticket->full_name;
         ticket_info.age = ticket->age;
         ticket_info.gender = ticket->gender;
-        ticket_info.ticket_id = ticket->id;
+        ticket_info.ticket_type = ticket->ticket_type;
         ticket_info.balance = ticket->balance;
         ticket_info.ticket_id = ticket->id;
         return ticket_info;
