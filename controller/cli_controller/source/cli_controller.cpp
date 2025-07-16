@@ -17,8 +17,8 @@ namespace SkiPass {
 
     CLIController::~CLIController() = default;
 
-    const std::unordered_map<std::string, std::function<std::shared_ptr<ITicket>(CLIController&)>> CLIController::ticket_types {
-        std::pair{std::string{"unlimited"}, std::function<std::shared_ptr<ITicket>(CLIController&)>{[](CLIController& obj){ return obj.create_unlimited(); }}}
+    const std::unordered_map<std::string, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>> CLIController::ticket_types {
+        std::pair{std::string{"unlimited"}, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>{[](CLIController& obj){ return obj.create_unlimited(); }}}
     };
 
 
@@ -43,14 +43,10 @@ namespace SkiPass {
     void CLIController::on_create_ticket() {
         try {
             auto ticket_type = get_input<std::string>("Enter account type: ");
-            auto ticket = ticket_types.at(ticket_type)(*this);
-
-            service_->add_ticket(ticket);
-
-            //auto account = account_types.at(account_type)(*this);
-            //auto account_info = bank_.open_new_account(account);
-            //cards_.emplace(account_info.account_id, account_info.card);
-            //view_.show_account_created(account_info);
+            std::shared_ptr<AbstractTicket> ticket = ticket_types.at(ticket_type)(*this);
+            auto saved_ticket = service_->add_ticket(ticket);
+            std::cout << ticket->id<< std::endl;
+            view_->show_ticket_info(service_->get_ticket_info_struct(saved_ticket));
         } catch (const std::exception& e) {
             //view_.show_error(std::string("Error: ") + e.what());
         }
@@ -93,10 +89,11 @@ namespace SkiPass {
         }
     }
 
-    std::shared_ptr<ITicket> CLIController::create_unlimited() {
+    std::shared_ptr<AbstractTicket> CLIController::create_unlimited() {
         auto name = get_input<std::string>("Enter your name: ");
         auto age = get_input<unsigned>("Enter your age: ");
         auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
-        return std::make_shared<UnlimitedTicket>(0,name,age,gender,AbstractTicket::TicketType::UNLIMITED);
+        auto balance = "Unlimited";
+        return std::make_shared<UnlimitedTicket>(0,name,age,gender,AbstractTicket::TicketType::UNLIMITED, balance);
     }
 }

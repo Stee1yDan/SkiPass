@@ -1,6 +1,7 @@
 #pragma once
 #include "ticket.hpp"
 #include <iostream>
+#include <utility>
 
 namespace SkiPass {
     class AbstractTicket : public ITicket {
@@ -12,23 +13,24 @@ namespace SkiPass {
         LIMITED,
         SERVICE};
 
-    using ticket_type_t = TicketType;
-
-    AbstractTicket(ticket_id_t id,const std::string &full_name, unsigned age, const gender_t &gender, ticket_type_t ticket_type)
+    AbstractTicket(ticket_id_t id,const std::string &full_name, unsigned age, const gender_t &gender, TicketType ticket_type, balance_unit_t balance)
         : id(id),
           full_name(full_name),
           age(age),
           gender(gender),
-          ticket_type(ticket_type) {
+          ticket_type(ticket_type),
+          balance(balance){
     }
 
+    AbstractTicket(ticket_id_t id, const std::string & string, unsigned age, const gender_t & gender, TicketType ticket);
     ~AbstractTicket() override;
 
     ticket_id_t id;
         std::string full_name;
         unsigned age;
         gender_t gender;
-        ticket_type_t ticket_type;
+        TicketType ticket_type;
+        balance_unit_t balance;
     };
     std::ostream& operator<<(std::ostream& os, AbstractTicket::TicketType ticket);
 }

@@ -13,8 +13,9 @@ namespace SkiPass {
                         const std::string &full_name,
                         unsigned age,
                         const gender_t &gender,
-                        ticket_type_t ticket_type)
-            : AbstractTicket(id, full_name, age, gender, TicketType::UNLIMITED) {}
+                        TicketType ticket_type,
+                        balance_unit_t balance)
+            : AbstractTicket(id, full_name, age, gender, TicketType::UNLIMITED, balance) {}
 
         [[nodiscard]] bool extend_ticket(extension_unit_t value) override;
 

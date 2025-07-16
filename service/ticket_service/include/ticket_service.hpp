@@ -21,12 +21,12 @@ namespace SkiPass
         using ticket_id_t = ITicketRepository::ticket_id_t;
 
         struct TicketInfo {
-            std::string username;
+            std::string full_name;
             AbstractTicket::gender_t gender;
             unsigned age;
             AbstractTicket::ticket_id_t ticket_id;
-            AbstractTicket::ticket_type_t ticket_type;
-            AbstractTicket::balance_unit_t balance_unit;
+            AbstractTicket::TicketType ticket_type;
+            AbstractTicket::balance_unit_t balance;
         };
 
         enum class pass_operation_status {
@@ -70,8 +70,9 @@ namespace SkiPass
 
         TicketService(ITicketRepository &repository);
 
-        [[nodiscard]] std::optional<std::shared_ptr<ITicket>> add_ticket(std::shared_ptr<ITicket> ticket);
-        [[nodiscard]] std::optional<std::shared_ptr<ITicket>> get_ticket(AbstractTicket::ticket_id_t id);
+        [[nodiscard]] std::shared_ptr<AbstractTicket> add_ticket(std::shared_ptr<AbstractTicket> ticket);
+        [[nodiscard]] std::optional<std::shared_ptr<AbstractTicket>> get_ticket(AbstractTicket::ticket_id_t id);
+        [[nodiscard]] TicketInfo get_ticket_info_struct(std::shared_ptr<AbstractTicket> ticket);
 
 
     private:
