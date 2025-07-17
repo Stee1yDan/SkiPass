@@ -23,7 +23,7 @@ namespace SkiPass {
 
         [[nodiscard]] balance_unit_t get_info() const override;
 
-        [[nodiscard]] std::shared_ptr<ITicket> clone() const override;
+        [[nodiscard]] std::shared_ptr<AbstractTicket> clone() const override;
 
         ~UnlimitedTicket() override;
     };

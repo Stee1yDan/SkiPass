@@ -1,5 +1,6 @@
 #include "skipass_app.hpp"
 
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <bits/ostream.tcc>
@@ -11,6 +12,7 @@
 
 namespace SkiPass {
     int SkiPassApp::run(int argc, char const *argv[]) {
+        show_banner();
         auto builder = load(argc, argv);
         std::shared_ptr<ITicketRepository> ticket_repository = builder->build_repository();
         std::shared_ptr<IView> view = builder->build_view();
@@ -20,8 +22,6 @@ namespace SkiPass {
         // auto ticket2 = std::make_shared<UnlimitedTicket>("fio",22,"M", AbstractTicket::TicketType::UNLIMITED);
         // ticket_service->add_ticket(ticket1);
         // ticket_service->add_ticket(ticket2);
-        std::cout << "SkiPassApp::run" << std::endl;
-        std::cout << ticket_repository->increment_ticket_id() << std::endl;
         cli_controller->run();
         return 0;
     }
@@ -30,5 +30,20 @@ namespace SkiPass {
     {
         std::cout << "SkiPassApp::load" << std::endl;
         return std::make_unique<InMemoryAppBuilder>();
+    }
+
+    void SkiPassApp::show_banner() {
+        std::ifstream file("../application/banner.txt");
+
+        if (!file.is_open()) {
+            std::cerr << "Error: couldn't show banner\n";
+        }
+
+        std::string line;
+        while (std::getline(file, line)) {
+            std::cout << line << '\n';
+        }
+
+        file.close();
     }
 }

@@ -18,7 +18,20 @@ namespace SkiPass {
         return tickets_[id];
     }
 
-    std::shared_ptr<AbstractTicket> InMemoryTicketRepository::get_ticket(ticket_id_t id) {
+    bool InMemoryTicketRepository::delete_ticket(ticket_id_t id) {
+        auto ticket = tickets_.find(id);
+        if (ticket == tickets_.end()) {
+            return false;
+        }
+        tickets_.erase(ticket);
+        return true;
+    }
+
+    std::optional<std::shared_ptr<AbstractTicket>> InMemoryTicketRepository::get_ticket(ticket_id_t id) {
+        auto ticket = tickets_.find(id);
+        if (ticket == tickets_.end()) {
+            return std::nullopt;
+        }
         return tickets_[id];
     }
 

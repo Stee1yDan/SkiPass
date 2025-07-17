@@ -9,7 +9,7 @@ namespace SkiPass {
 
         ~CLIView() override;
 
-        void show_balance(std::shared_ptr<ITicket> ticket) override;
+        void show_balance(std::shared_ptr<AbstractTicket> ticket) override;
 
         void show_ticket_info(TicketService::TicketInfo ticket_info) override;
 
@@ -17,7 +17,7 @@ namespace SkiPass {
 
         void show_error(const std::string &error) override;
 
-        void show_ticket_created(std::shared_ptr<ITicket> ticket) override;
+        void show_ticket_created(std::shared_ptr<AbstractTicket> ticket) override;
     };
 
 }

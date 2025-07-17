@@ -11,3 +11,5 @@ add_subdirectory(repository)
 add_subdirectory(service)
 add_subdirectory(view)
 
+configure_file(application/banner.txt application/banner.txt COPYONLY)
+

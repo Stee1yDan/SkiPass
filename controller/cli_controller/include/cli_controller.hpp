@@ -4,7 +4,6 @@
 #include <unordered_map>
 
 #include "controller.hpp"
-#include "ticket.hpp"
 #include "view.hpp"
 #include "abstract_ticket.hpp"
 #include "ticket_service.hpp"
@@ -22,7 +21,9 @@ namespace SkiPass {
 
         void on_create_ticket() override;
 
-        void on_close_ticket() override;
+        void on_delete_ticket() override;
+
+        void on_show_ticket_info() override;
 
         void on_check_balance() override;
 

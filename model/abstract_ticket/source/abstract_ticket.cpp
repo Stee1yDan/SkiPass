@@ -12,4 +12,6 @@ namespace SkiPass {
             default:                        return os << "Unknown";
         }
     }
+
+
 }

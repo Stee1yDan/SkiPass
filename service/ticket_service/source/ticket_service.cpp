@@ -23,4 +23,14 @@ namespace SkiPass {
         ticket_info.ticket_id = ticket->id;
         return ticket_info;
     }
+
+    TicketService::TicketService(ITicketRepository &repository) {
+    }
+
+    TicketService::ticket_management_operation_status TicketService::delete_ticket(AbstractTicket::ticket_id_t id) {
+        if (repository_->delete_ticket(id)) {
+            return TicketService::ticket_management_operation_status::success;
+        }
+        return TicketService::ticket_management_operation_status::invalid_id;
+    }
 }

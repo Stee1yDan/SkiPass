@@ -15,7 +15,9 @@ namespace SkiPass {
 
         std::shared_ptr<AbstractTicket> add_ticket(std::shared_ptr<AbstractTicket> account) override;
 
-        std::shared_ptr<AbstractTicket> get_ticket(ticket_id_t id) override;
+        bool delete_ticket(ticket_id_t id) override;
+
+        std::optional<std::shared_ptr<AbstractTicket>> get_ticket(ticket_id_t id) override;
 
         ticket_id_t increment_ticket_id() override;
 

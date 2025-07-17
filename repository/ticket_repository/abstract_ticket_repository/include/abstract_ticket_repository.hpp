@@ -1,9 +1,9 @@
 #pragma once
-#include <ticket.hpp>
 #include <abstract_ticket.hpp>
 
 #include <vector>
 #include <memory>
+#include <optional>
 
 namespace SkiPass {
     class ITicketRepository {
@@ -17,7 +17,9 @@ namespace SkiPass {
 
         virtual std::shared_ptr<AbstractTicket> add_ticket(std::shared_ptr<AbstractTicket> ticket) = 0;
 
-        virtual std::shared_ptr<AbstractTicket> get_ticket(ticket_id_t id) = 0;
+        virtual std::optional<std::shared_ptr<AbstractTicket>> get_ticket(ticket_id_t id) = 0;
+
+        virtual bool delete_ticket(ticket_id_t id) = 0;
 
         ITicketRepository() = default;
 

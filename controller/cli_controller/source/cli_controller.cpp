@@ -1,4 +1,7 @@
 #include "cli_controller.hpp"
+
+#include <format>
+
 #include "unlimited_ticket.hpp"
 
 #include <iostream>
@@ -27,6 +30,8 @@ namespace SkiPass {
             std::cout << "\nBanking System Menu:\n"
                       << "1. Create Ticket\n"
                       << "2. Show Balance\n"
+                      << "3. Show Ticket Info\n"
+                      << "6. Delete Ticket\n"
                       << "7. Exit\n";
 
             int choice = get_input<int>("Enter choice: ");
@@ -34,9 +39,27 @@ namespace SkiPass {
             switch (choice) {
                 case 1: on_create_ticket(); break;
                 case 2: on_check_balance(); break;
+                case 3: on_show_ticket_info(); break;
+                case 6: on_delete_ticket(); break;
                 case 7: return;
-                //default: view_.show_error("Invalid choice"); break;
+                default: view_->show_error("Invalid choice"); break;
             }
+        }
+    }
+
+    void CLIController::on_show_ticket_info() {
+        try {
+            auto id = get_input<AbstractTicket::ticket_id_t>("Enter ticket id: ");
+            auto ticket = service_->get_ticket(id);
+            if (ticket.has_value()) {
+                view_->show_ticket_info(service_->get_ticket_info_struct(ticket.value()));
+            }
+            else {
+                view_->show_message("No such ticket found!");
+            }
+
+        } catch (const std::exception& e) {
+            view_->show_error(std::string("Error: ") + e.what());
         }
     }
 
@@ -48,21 +71,41 @@ namespace SkiPass {
             std::cout << saved_ticket->ticket_type<< std::endl;
             view_->show_ticket_info(service_->get_ticket_info_struct(saved_ticket));
         } catch (const std::exception& e) {
-            //view_.show_error(std::string("Error: ") + e.what());
+            view_->show_error(std::string("Error: ") + e.what());
         }
     }
 
-    void CLIController::on_close_ticket() {
+    void CLIController::on_delete_ticket() {
+        try {
+            auto id = get_input<AbstractTicket::ticket_id_t>("Enter id of ticket to delete: ");
+            auto operation_status = service_->delete_ticket(id);
+            if (operation_status == TicketService::ticket_management_operation_status::success) {
+                view_->show_message(std::format("The ticket with id {} is deleted", id));
+            }
+            else if (operation_status == TicketService::ticket_management_operation_status::invalid_id) {
+                view_->show_message(std::format("The ticket with is not found", id));
+            }
+        }
+        catch (const std::exception& e) {
+            view_->show_error(std::string("Error: ") + e.what());
+        }
+
     }
 
     void CLIController::on_check_balance() {
         try {
             auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
             auto ticket = service_->get_ticket(ticket_id);
-            view_->show_balance(ticket.value());
+
+            if (ticket.has_value()) {
+                view_->show_balance(ticket.value());
+            }
+            else {
+                view_->show_message("No such ticket found!");
+            }
         }
         catch (const std::exception& e) {
-
+            view_->show_error(std::string("Error: ") + e.what());
         }
     }
 

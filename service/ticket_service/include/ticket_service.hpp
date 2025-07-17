@@ -1,7 +1,6 @@
 #pragma once
 
 #include <abstract_ticket_repository.hpp>
-#include <ticket.hpp>
 #include <abstract_ticket.hpp>
 
 #include <optional>
@@ -37,33 +36,22 @@ namespace SkiPass
             operation_declined
         };
 
-        enum class balance_operation_status {
+        enum class ticket_management_operation_status {
             success,
             invalid_extension_period,
             not_enough_money,
-            operation_declined
-        };
-
-        enum class opening_ticket_operation_status {
-            success,
-            not_enough_money,
-            invalid_ticket_type,
-            operation_declined
+            operation_declined,
+            invalid_id
         };
 
         struct pass_result {
-            std::optional<std::unique_ptr<ITicket::extension_unit_t>> balance;
+            std::optional<std::unique_ptr<AbstractTicket::extension_unit_t>> balance;
             pass_operation_status status;
         };
 
         struct balance_operation_result {
-            std::optional<std::unique_ptr<ITicket::extension_unit_t>> balance;
+            std::optional<std::unique_ptr<AbstractTicket::extension_unit_t>> balance;
             pass_operation_status status;
-        };
-
-        struct opening_ticket_operation_result {
-            std::optional<std::optional<std::unique_ptr<ITicket::extension_unit_t>>> ticket;
-            opening_ticket_operation_status status;
         };
 
         std::size_t ticket_id_{};
@@ -71,6 +59,7 @@ namespace SkiPass
         TicketService(ITicketRepository &repository);
 
         [[nodiscard]] std::shared_ptr<AbstractTicket> add_ticket(std::shared_ptr<AbstractTicket> ticket);
+        [[nodiscard]] ticket_management_operation_status delete_ticket(AbstractTicket::ticket_id_t ticket);
         [[nodiscard]] std::optional<std::shared_ptr<AbstractTicket>> get_ticket(AbstractTicket::ticket_id_t id);
         [[nodiscard]] TicketInfo get_ticket_info_struct(std::shared_ptr<AbstractTicket> ticket);
 
