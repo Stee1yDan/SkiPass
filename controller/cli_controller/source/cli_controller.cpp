@@ -53,7 +53,7 @@ namespace SkiPass {
             auto id = get_input<AbstractTicket::ticket_id_t>("Enter ticket id: ");
             auto ticket = service_->get_ticket(id);
             if (ticket.has_value()) {
-                view_->show_ticket_info(service_->get_ticket_info_struct(ticket.value()));
+                view_->show_ticket_info(SkiPass::TicketService::get_ticket_info_struct(ticket.value()));
             }
             else {
                 view_->show_message("No such ticket found!");

@@ -4,4 +4,5 @@ project (ticket_types)
 set(CMAKE_CXX_STANDARD 23)
 
 add_subdirectory(unlimited_ticket)
+add_subdirectory(limited_ticket)
 add_subdirectory(service_ticket)
