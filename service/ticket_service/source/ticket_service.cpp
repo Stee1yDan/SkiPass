@@ -49,6 +49,7 @@ namespace SkiPass {
     TicketService::pass_operation_status TicketService::pass_through_tourniquet(AbstractTicket::ticket_id_t id,
         unsigned tourniquet_id) const {
         auto ticket = repository_->get_ticket(id);
+
         if (!ticket.has_value()) {
             return pass_operation_status::no_such_ticket_found;
         }
