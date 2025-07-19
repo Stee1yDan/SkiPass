@@ -21,5 +21,4 @@ std::shared_ptr<SkiPass::AbstractTicket> SkiPass::ServiceTicket::clone() const {
     return new_ticket;
 }
 
-SkiPass::ServiceTicket::~ServiceTicket() {
-}
+SkiPass::ServiceTicket::~ServiceTicket() = default;

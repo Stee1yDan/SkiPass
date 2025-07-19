@@ -1,4 +1,6 @@
 #pragma once
+#include <utility>
+
 #include "abstract_ticket.hpp"
 
 
@@ -15,7 +17,7 @@ namespace SkiPass {
                         const gender_t &gender,
                         TicketType,
                         balance_unit_t balance)
-            : LimitedTicket(id, full_name, age, gender, TicketType::LIMITED, balance) {}
+            : LimitedTicket(id, full_name, age, gender, TicketType::LIMITED, std::move(balance)) {}
 
         [[nodiscard]] bool extend_ticket(extension_unit_t value) override;
 
