@@ -1,5 +1,7 @@
 #include "limited_ticket.hpp"
 
+#include <format>
+
 bool SkiPass::LimitedTicket::pass() {
     auto balance_unit = std::stoll(balance);
     balance = std::to_string(--balance_unit);
@@ -16,7 +18,7 @@ bool SkiPass::LimitedTicket::extend_ticket(extension_unit_t value) {
 }
 
 SkiPass::AbstractTicket::balance_unit_t SkiPass::LimitedTicket::get_balance() {
-    return balance;
+    return std::format("Passes left - {}",balance);
 }
 
 std::shared_ptr<SkiPass::AbstractTicket> SkiPass::LimitedTicket::clone() const {

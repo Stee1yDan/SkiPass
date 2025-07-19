@@ -11,5 +11,6 @@ target_link_libraries(cli_controller PUBLIC
         unlimited_ticket
         limited_ticket
         service_ticket
+        temporary_ticket
         controller
         view)

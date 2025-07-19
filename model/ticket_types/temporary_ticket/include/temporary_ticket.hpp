@@ -1,4 +1,6 @@
 #pragma once
+#include <chrono>
+
 #include "abstract_ticket.hpp"
 
 
@@ -24,5 +26,8 @@ namespace SkiPass {
         [[nodiscard]] std::shared_ptr<AbstractTicket> clone() const override;
 
         ~TemporaryTicket() override;
+
+        std::string convert_date_to_string(const std::chrono::year_month_day& date);
+        std::chrono::year_month_day convert_string_to_date(const std::string& dateStr);
     };
 }

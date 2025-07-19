@@ -5,6 +5,7 @@
 #include "unlimited_ticket.hpp"
 #include "limited_ticket.hpp"
 #include "service_ticket.hpp"
+#include "temporary_ticket.hpp"
 
 #include <iostream>
 #include <iostream>
@@ -25,7 +26,8 @@ namespace SkiPass {
     const std::unordered_map<std::string, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>> CLIController::ticket_types {
         std::pair{std::string{"unlimited"}, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>{[](CLIController& obj){ return obj.create_unlimited(); }}},
         std::pair{std::string{"limited"}, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>{[](CLIController& obj){ return obj.create_limited(); }}},
-        std::pair{std::string{"service"}, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>{[](CLIController& obj){ return obj.create_service(); }}}
+        std::pair{std::string{"service"}, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>{[](CLIController& obj){ return obj.create_service(); }}},
+        std::pair{std::string{"temporary"}, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>{[](CLIController& obj){ return obj.create_temporary(); }}}
     };
 
     void CLIController::run() {
@@ -163,5 +165,14 @@ namespace SkiPass {
         auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
         auto balance = "Unlimited";
         return std::make_shared<ServiceTicket>(0,name,age,gender,AbstractTicket::TicketType::SERVICE, balance);
+    }
+
+    std::shared_ptr<AbstractTicket> CLIController::create_temporary() {
+        auto name = get_input<std::string>("Enter your name: ");
+        auto age = get_input<unsigned>("Enter your age: ");
+        auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
+
+        auto balance = "2020-01-01";
+        return std::make_shared<TemporaryTicket>(0,name,age,gender,AbstractTicket::TicketType::TEMPORARY, balance);
     }
 }

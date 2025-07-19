@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <functional>
 #include <unordered_map>
 
@@ -34,11 +35,11 @@ namespace SkiPass {
         std::shared_ptr<AbstractTicket> create_unlimited();
         std::shared_ptr<AbstractTicket> create_limited();
         std::shared_ptr<AbstractTicket> create_service();
+        std::shared_ptr<AbstractTicket> create_temporary();
 
         static const std::unordered_map<std::string, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>> ticket_types;
 
         std::shared_ptr<TicketService> service_;
         std::shared_ptr<IView> view_;
-
     };
 }
