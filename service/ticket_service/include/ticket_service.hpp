@@ -7,7 +7,7 @@
 #include <random>
 #include <map>
 #include <limits>
-
+#include <unordered_map>
 
 
 namespace SkiPass
@@ -16,7 +16,6 @@ namespace SkiPass
     {
     public:
         explicit TicketService(std::shared_ptr<ITicketRepository> repository);
-
         using ticket_id_t = ITicketRepository::ticket_id_t;
 
         struct TicketInfo {
@@ -33,6 +32,7 @@ namespace SkiPass
             ticket_expired,
             no_passes_left,
             wrong_tourniquet,
+            no_such_ticket_found,
             operation_declined
         };
 
@@ -61,10 +61,13 @@ namespace SkiPass
         [[nodiscard]] std::shared_ptr<AbstractTicket> add_ticket(std::shared_ptr<AbstractTicket> ticket);
         [[nodiscard]] ticket_management_operation_status delete_ticket(AbstractTicket::ticket_id_t ticket);
         [[nodiscard]] std::optional<std::shared_ptr<AbstractTicket>> get_ticket(AbstractTicket::ticket_id_t id);
+        [[nodiscard]] pass_operation_status pass_through_tourniquet(AbstractTicket::ticket_id_t id, unsigned tourniquet_id) const;
         [[nodiscard]] static TicketInfo get_ticket_info_struct(const std::shared_ptr<AbstractTicket>& ticket);
 
 
     private:
         std::shared_ptr<ITicketRepository> repository_;
+        static const std::unordered_map<unsigned, bool> service_tourniquet_registry;
+        static bool is_service_tourniquet(unsigned tourniquet_id);
     };
 }

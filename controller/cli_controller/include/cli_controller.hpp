@@ -28,6 +28,8 @@ namespace SkiPass {
 
         void on_check_balance() override;
 
+        void on_pass() override;
+
     private:
         template<typename T>
         T get_input(const std::string& prompt);   

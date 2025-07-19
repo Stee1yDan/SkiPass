@@ -5,6 +5,7 @@
 bool SkiPass::LimitedTicket::pass() {
     auto balance_unit = std::stoll(balance);
     balance = std::to_string(--balance_unit);
+    return true;
 }
 
 bool SkiPass::LimitedTicket::can_pass() {

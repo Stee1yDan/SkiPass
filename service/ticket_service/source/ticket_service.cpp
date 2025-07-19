@@ -1,6 +1,18 @@
 #include "ticket_service.hpp"
 
 namespace SkiPass {
+    const std::unordered_map<unsigned, bool> TicketService::service_tourniquet_registry {
+        std::pair{1, false},
+        std::pair{2, false},
+        std::pair{3, false},
+        std::pair{4, false},
+        std::pair{5, true}
+    };
+
+    bool TicketService::is_service_tourniquet(unsigned tourniquet_id) {
+        return service_tourniquet_registry.at(tourniquet_id);
+    }
+
     TicketService::TicketService(std::shared_ptr<ITicketRepository> repository) {
         repository_ = repository;
     }
@@ -32,5 +44,30 @@ namespace SkiPass {
             return TicketService::ticket_management_operation_status::success;
         }
         return TicketService::ticket_management_operation_status::invalid_id;
+    }
+
+    TicketService::pass_operation_status TicketService::pass_through_tourniquet(AbstractTicket::ticket_id_t id,
+        unsigned tourniquet_id) const {
+        auto ticket = repository_->get_ticket(id);
+        if (!ticket.has_value()) {
+            return pass_operation_status::no_such_ticket_found;
+        }
+
+        if (!ticket->get()->can_pass()) {
+            if (ticket->get()->ticket_type == AbstractTicket::TicketType::LIMITED)
+                return pass_operation_status::no_passes_left;
+
+            if (ticket->get()->ticket_type == AbstractTicket::TicketType::TEMPORARY)
+                return pass_operation_status::ticket_expired;
+        }
+
+        if (!is_service_tourniquet(tourniquet_id) &&
+            ticket->get()->ticket_type == AbstractTicket::TicketType::SERVICE) {
+            return pass_operation_status::wrong_tourniquet;
+        }
+
+        ticket->get()->pass();
+
+        return pass_operation_status::success;
     }
 }

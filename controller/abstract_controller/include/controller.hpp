@@ -15,6 +15,7 @@ namespace SkiPass {
         virtual void on_delete_ticket() = 0;
         virtual void on_check_balance() = 0;
         virtual void on_show_ticket_info() = 0;
+        virtual void on_pass() = 0;
     };
 
 } // namespace banking
