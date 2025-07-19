@@ -3,6 +3,7 @@
 #include <format>
 
 #include "unlimited_ticket.hpp"
+#include "limited_ticket.hpp"
 #include "service_ticket.hpp"
 
 #include <iostream>
@@ -23,6 +24,7 @@ namespace SkiPass {
 
     const std::unordered_map<std::string, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>> CLIController::ticket_types {
         std::pair{std::string{"unlimited"}, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>{[](CLIController& obj){ return obj.create_unlimited(); }}},
+        std::pair{std::string{"limited"}, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>{[](CLIController& obj){ return obj.create_limited(); }}},
         std::pair{std::string{"service"}, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>{[](CLIController& obj){ return obj.create_service(); }}}
     };
 
@@ -64,10 +66,17 @@ namespace SkiPass {
         }
     }
 
+
     void CLIController::on_create_ticket() {
         try {
             auto ticket_type = get_input<std::string>("Enter ticket type: ");
+
+            // for (char &c : ticket_type) {
+            //     c = std::tolower(c);
+            // }
+
             std::shared_ptr<AbstractTicket> ticket = ticket_types.at(ticket_type)(*this);
+            view_->show_ticket_info(SkiPass::TicketService::get_ticket_info_struct(ticket));
             auto saved_ticket = service_->add_ticket(ticket);
             view_->show_ticket_info(SkiPass::TicketService::get_ticket_info_struct(saved_ticket));
         } catch (const std::exception& e) {
@@ -138,6 +147,14 @@ namespace SkiPass {
         auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
         auto balance = "Unlimited";
         return std::make_shared<UnlimitedTicket>(0,name,age,gender,AbstractTicket::TicketType::UNLIMITED, balance);
+    }
+
+    std::shared_ptr<AbstractTicket> CLIController::create_limited() {
+        auto name = get_input<std::string>("Enter your name: ");
+        auto age = get_input<unsigned>("Enter your age: ");
+        auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
+        auto balance = get_input<AbstractTicket::balance_unit_t>("Enter initial number of passes: ");
+        return std::make_shared<LimitedTicket>(0,name,age,gender,AbstractTicket::TicketType::LIMITED, balance);
     }
 
     std::shared_ptr<AbstractTicket> CLIController::create_service() {

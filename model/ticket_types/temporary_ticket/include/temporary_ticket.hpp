@@ -1,23 +1,21 @@
 #pragma once
-#include <utility>
-
 #include "abstract_ticket.hpp"
 
 
 namespace SkiPass {
-    class LimitedTicket : public AbstractTicket {
+    class TemporaryTicket : public AbstractTicket {
     public:
         bool pass() override;
 
         bool can_pass() override;
 
-        LimitedTicket(ticket_id_t id,
+        TemporaryTicket(ticket_id_t id,
                         const std::string &full_name,
                         unsigned age,
                         const gender_t &gender,
                         TicketType,
                         balance_unit_t balance)
-            : AbstractTicket(id, full_name, age, gender, TicketType::LIMITED, balance) {}
+            : AbstractTicket(id, full_name, age, gender, TicketType::TEMPORARY, balance) {}
 
         [[nodiscard]] bool extend_ticket(extension_unit_t value) override;
 
@@ -25,6 +23,6 @@ namespace SkiPass {
 
         [[nodiscard]] std::shared_ptr<AbstractTicket> clone() const override;
 
-        ~LimitedTicket() override;
+        ~TemporaryTicket() override;
     };
 }
