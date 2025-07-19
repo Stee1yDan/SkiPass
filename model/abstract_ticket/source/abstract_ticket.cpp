@@ -5,10 +5,10 @@ namespace SkiPass {
 
     std::ostream & operator<<(std::ostream &os, AbstractTicket::TicketType ticket_type) {
         switch (ticket_type) {
-            case AbstractTicket::TicketType::LIMITED:       return os << "Limited";
-            case AbstractTicket::TicketType::UNLIMITED:     return os << "Unlimited";
-            case AbstractTicket::TicketType::SERVICE:       return os << "Service";
-            case AbstractTicket::TicketType::TEMPORARY:     return os << "Temporary";
+            case AbstractTicket::TicketType::LIMITED:       return os << "LIMITED";
+            case AbstractTicket::TicketType::UNLIMITED:     return os << "UNLIMITED";
+            case AbstractTicket::TicketType::SERVICE:       return os << "SERVICE";
+            case AbstractTicket::TicketType::TEMPORARY:     return os << "TEMPORARY";
             default:                        return os << "Unknown";
         }
     }

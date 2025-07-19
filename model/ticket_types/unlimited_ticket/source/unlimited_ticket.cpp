@@ -14,11 +14,7 @@ namespace SkiPass {
     }
 
     std::string UnlimitedTicket::get_balance() {
-        return "Unlimited";
-    }
-
-    std::string UnlimitedTicket::get_info() const {
-        return "Unlimited";
+        return balance;
     }
 
     std::shared_ptr<AbstractTicket> UnlimitedTicket::clone() const {

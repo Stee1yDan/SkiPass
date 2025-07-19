@@ -32,6 +32,7 @@ namespace SkiPass {
         T get_input(const std::string& prompt);   
     
         std::shared_ptr<AbstractTicket> create_unlimited();
+        std::shared_ptr<AbstractTicket> create_service();
 
         static const std::unordered_map<std::string, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>> ticket_types;
 

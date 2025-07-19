@@ -15,7 +15,7 @@ namespace SkiPass {
         auto id = ticket_id_t_++;
         ticket->id = id;
         tickets_[id] = ticket;
-        return tickets_[id];
+        return ticket;
     }
 
     bool InMemoryTicketRepository::delete_ticket(ticket_id_t id) {

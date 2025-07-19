@@ -9,5 +9,6 @@ target_include_directories(cli_controller PUBLIC include)
 target_link_libraries(cli_controller PUBLIC
         ticket_service
         unlimited_ticket
+        service_ticket
         controller
         view)

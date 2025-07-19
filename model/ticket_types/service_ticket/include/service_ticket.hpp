@@ -3,19 +3,19 @@
 
 
 namespace SkiPass {
-    class UnlimitedTicket : public AbstractTicket {
+    class ServiceTicket : public AbstractTicket {
     public:
         bool pass() override;
 
         bool can_pass() override;
 
-        UnlimitedTicket(ticket_id_t id,
+        ServiceTicket(ticket_id_t id,
                         const std::string &full_name,
                         unsigned age,
                         const gender_t &gender,
                         TicketType,
                         balance_unit_t balance)
-            : AbstractTicket(id, full_name, age, gender, TicketType::UNLIMITED, balance) {}
+            : AbstractTicket(id, full_name, age, gender, TicketType::SERVICE, balance) {}
 
         [[nodiscard]] bool extend_ticket(extension_unit_t value) override;
 
@@ -23,6 +23,6 @@ namespace SkiPass {
 
         [[nodiscard]] std::shared_ptr<AbstractTicket> clone() const override;
 
-        ~UnlimitedTicket() override;
+        ~ServiceTicket() override;
     };
 }

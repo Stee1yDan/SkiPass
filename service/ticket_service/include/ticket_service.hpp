@@ -56,12 +56,12 @@ namespace SkiPass
 
         std::size_t ticket_id_{};
 
-        TicketService(ITicketRepository &repository);
+        explicit TicketService(ITicketRepository &repository);
 
         [[nodiscard]] std::shared_ptr<AbstractTicket> add_ticket(std::shared_ptr<AbstractTicket> ticket);
         [[nodiscard]] ticket_management_operation_status delete_ticket(AbstractTicket::ticket_id_t ticket);
         [[nodiscard]] std::optional<std::shared_ptr<AbstractTicket>> get_ticket(AbstractTicket::ticket_id_t id);
-        [[nodiscard]] TicketInfo get_ticket_info_struct(std::shared_ptr<AbstractTicket> ticket);
+        [[nodiscard]] static TicketInfo get_ticket_info_struct(const std::shared_ptr<AbstractTicket>& ticket);
 
 
     private:

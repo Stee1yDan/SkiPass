@@ -6,14 +6,14 @@ namespace SkiPass {
     }
 
     std::shared_ptr<AbstractTicket> TicketService::add_ticket(std::shared_ptr<AbstractTicket> ticket) {
-        return repository_->add_ticket(ticket);
+        return repository_->add_ticket(std::move(ticket));
     }
 
     std::optional<std::shared_ptr<AbstractTicket>> TicketService::get_ticket(AbstractTicket::ticket_id_t id) {
         return repository_->get_ticket(id);
     }
 
-    TicketService::TicketInfo TicketService::get_ticket_info_struct(std::shared_ptr<AbstractTicket> ticket) {
+    TicketService::TicketInfo TicketService::get_ticket_info_struct(const std::shared_ptr<AbstractTicket>& ticket) {
         TicketInfo ticket_info;
         ticket_info.full_name = ticket->full_name;
         ticket_info.age = ticket->age;
