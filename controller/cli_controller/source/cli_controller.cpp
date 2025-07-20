@@ -13,6 +13,8 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "time_utils.hpp"
+
 
 namespace SkiPass {
 
@@ -143,7 +145,7 @@ namespace SkiPass {
             if (ss >> value) {
                 return value;
             }
-            //view_.show_error("Invalid input, please try again");
+            view_->show_error("Invalid input, please try again");
         }
     }
 
@@ -154,24 +156,30 @@ namespace SkiPass {
 
             auto pass_result = service_->pass_through_tourniquet(ticket_id, tourniquet_id);
 
-            if (pass_result == TicketService::pass_operation_status::no_such_ticket_found) {
-                view_->show_message(std::format("No ticket with id {} is found", tourniquet_id));
-            }
+            switch (pass_result) {
+                case TicketService::pass_operation_status::no_such_ticket_found:
+                    view_->show_message(std::format("No ticket with id {} is found", ticket_id));
+                    break;
 
-            if (pass_result == TicketService::pass_operation_status::success) {
-                view_->show_message("Passed!");
-            }
+                case TicketService::pass_operation_status::success:
+                    view_->show_message("Passed!");
+                    break;
 
-            if (pass_result == TicketService::pass_operation_status::no_passes_left) {
-                view_->show_message("No passes left! Please extend your ticket!");
-            }
+                case TicketService::pass_operation_status::no_passes_left:
+                    view_->show_message("No passes left! Please extend your ticket!");
+                    break;
 
-            if (pass_result == TicketService::pass_operation_status::ticket_expired) {
-                view_->show_message("Ticket is expired! Please extend your ticket!");
-            }
+                case TicketService::pass_operation_status::ticket_expired:
+                    view_->show_message("Ticket is expired! Please extend your ticket!");
+                    break;
 
-            if (pass_result == TicketService::pass_operation_status::wrong_tourniquet) {
-                view_->show_message("Service ticket can't be used here!");
+                case TicketService::pass_operation_status::wrong_tourniquet:
+                    view_->show_message("Service ticket can't be used here!");
+                    break;
+
+                default:
+                    view_->show_message("Unknown pass result status!");
+                    break;
             }
         } catch (const std::exception& e) {
             view_->show_error(std::string("Error: ") + e.what());
@@ -187,26 +195,33 @@ namespace SkiPass {
 
             auto res = service_->extend_ticket(ticket_id, extension_units, funds);
 
-            if (res.status == TicketService::balance_operation_status::invalid_ticket_type) {
-                view_->show_message("Can't extend this type of ticket!");
-            }
+            switch (res.status) {
+                case TicketService::balance_operation_status::invalid_ticket_type:
+                    view_->show_message("Can't extend this type of ticket!");
+                    break;
 
-            if (res.status == TicketService::balance_operation_status::not_enough_money) {
-                view_->show_message("Not enough money for the purchase!");
-            }
+                case TicketService::balance_operation_status::not_enough_money:
+                    view_->show_message("Not enough money for the purchase!");
+                    break;
 
-            if (res.status == TicketService::balance_operation_status::invalid_extension_unit) {
-                view_->show_message("Invalid value for the purchase!");
-            }
+                case TicketService::balance_operation_status::invalid_extension_unit:
+                    view_->show_message("Invalid value for the purchase!");
+                    break;
 
-            if (res.status == TicketService::balance_operation_status::success) {
-                view_->show_message("Ticket was extend successfully!");
-                view_->show_message(std::format("Your change: {} RUB", res.change));
+                case TicketService::balance_operation_status::success:
+                    view_->show_message("Ticket was extended successfully!");
+                    view_->show_message(std::format("Your change: {} RUB", res.change));
+                    break;
+
+                default:
+                    view_->show_message("Unknown extension result status!");
+                    break;
             }
         } catch (const std::exception& e) {
             view_->show_error(std::string("Error: ") + e.what());
         }
     }
+
 
     std::shared_ptr<AbstractTicket> CLIController::create_unlimited() {
         auto name = get_input<std::string>("Enter your name: ");
@@ -237,7 +252,7 @@ namespace SkiPass {
         auto age = get_input<unsigned>("Enter your age: ");
         auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
 
-        auto balance = "2020-01-01";
+        auto balance = TimeUtils::convert_date_to_string(TimeUtils::get_current_date());
         return std::make_shared<TemporaryTicket>(0,name,age,gender,AbstractTicket::TicketType::TEMPORARY, balance);
     }
 }

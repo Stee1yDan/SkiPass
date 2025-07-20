@@ -81,18 +81,22 @@ namespace SkiPass {
     TicketService::BalanceOperation TicketService::extend_ticket(AbstractTicket::ticket_id_t id,
         int extension_units,
         int funds) const {
-        std::cout << "Here\n";
+
         auto ticket = repository_->get_ticket(id);
 
         if (extension_units < 0) {
             return BalanceOperation(balance_operation_status::invalid_extension_unit, 0);
         }
 
+        if (funds < 0) {
+            return BalanceOperation(balance_operation_status::not_enough_money, 0);
+        }
+
         if (!ticket.has_value()) {
             return BalanceOperation(balance_operation_status::no_such_ticket_found, 0);
         }
 
-        std::cout << "Here\n";
+
 
         auto ticket_type = ticket->get()->ticket_type;
 
@@ -104,7 +108,7 @@ namespace SkiPass {
             return BalanceOperation(balance_operation_status::invalid_ticket_type,0);
         }
 
-        std::cout << "Here\n";
+
 
         auto funds_needed = extension_units * ticket_extension_prices.at(ticket_type);
 
@@ -116,7 +120,7 @@ namespace SkiPass {
             return BalanceOperation(balance_operation_status::operation_declined,0);
         }
 
-        std::cout << "Here\n";
+
 
         auto change = funds - funds_needed;
         return BalanceOperation(balance_operation_status::success,change);
