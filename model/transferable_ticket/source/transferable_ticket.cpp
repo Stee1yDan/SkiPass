@@ -1,9 +1,13 @@
 #include "transferable_ticket.hpp"
 
 namespace SkiPass {
-    bool TransferableTicket::change_owner(std::string &new_owner) {
+    bool TransferableTicket::change_owner(const std::string &new_owner) {
         full_name = new_owner;
         return true;
+    }
+
+    void TransferableTicket::operator()(const std::string &new_owner) {
+        this->full_name = new_owner;
     }
 
     TransferableTicket::~TransferableTicket() = default;

@@ -9,7 +9,8 @@ namespace SkiPass {
             : AbstractTicket(id, full_name, age, gender, ticket_type) {
         }
 
-        bool change_owner(std::string &new_owner);
+        bool change_owner(const std::string &new_owner);
+        void operator()(const std::string& new_owner);
 
         ~TransferableTicket() override;
 

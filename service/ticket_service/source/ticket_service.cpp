@@ -154,11 +154,9 @@ namespace SkiPass {
             return ticket_management_operation_status::wrong_type_of_ticket;
         }
 
-        if (transferable_ticket->change_owner(new_name)) {
-            return ticket_management_operation_status::success;
-        }
+        (*transferable_ticket)(new_name);
 
-        return ticket_management_operation_status::operation_declined;
+        return ticket_management_operation_status::success;
 
     }
 }
