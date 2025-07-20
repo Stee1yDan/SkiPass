@@ -19,6 +19,6 @@ namespace SkiPass {
 
         [[nodiscard]] std::shared_ptr<AbstractTicket> clone() const override;
 
-        ~ServiceTicket() override;
+        ~ServiceTicket() override = default;
     };
 }

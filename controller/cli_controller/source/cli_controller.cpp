@@ -124,8 +124,10 @@ namespace SkiPass {
                 view_->show_message("No such ticket found!");
             }
 
-            if (auto* rechargeable_ticket  = dynamic_cast<ExtendableTicket*>(ticket->get())) {
-                 view_->show_balance(*rechargeable_ticket);
+            std::shared_ptr<ExtendableTicket> extendedTicket = std::dynamic_pointer_cast<ExtendableTicket>(ticket.value());
+
+            if (extendedTicket) {
+                 view_->show_balance(extendedTicket);
             }
         }
         catch (const std::exception& e) {

@@ -2,8 +2,6 @@
 
 
 namespace SkiPass {
-    AbstractTicket::~AbstractTicket() = default;
-
     const std::unordered_map<unsigned, bool> AbstractTicket::service_tourniquet_registry {
         std::pair{0, false},
         std::pair{1, false},

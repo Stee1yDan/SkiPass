@@ -17,7 +17,7 @@ namespace SkiPass {
                         unsigned age,
                         const gender_t &gender,
                         TicketType,
-                        balance_unit_t balance)
+                        const balance_unit_t& balance)
             :  ExtendableTicket(id, full_name, age, gender, TicketType::LIMITED, balance) {
         }
 

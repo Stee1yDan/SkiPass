@@ -98,8 +98,10 @@ namespace SkiPass {
 
         auto change = funds - funds_needed;
 
-        if (auto* rechargeable_ticket  = dynamic_cast<ExtendableTicket*>(ticket->get())) {
-            rechargeable_ticket->extend_ticket(extension_units);
+        std::shared_ptr<ExtendableTicket> extendedTicket = std::dynamic_pointer_cast<ExtendableTicket>(ticket.value());
+
+        if (extendedTicket) {
+            extendedTicket->extend_ticket(extension_units);
             return BalanceOperation(balance_operation_status::success,change);
         }
 
