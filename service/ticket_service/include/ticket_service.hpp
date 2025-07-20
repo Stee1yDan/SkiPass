@@ -70,8 +70,6 @@ namespace SkiPass
 
     private:
         std::shared_ptr<ITicketRepository> repository_;
-        static const std::unordered_map<unsigned, bool> service_tourniquet_registry;
         static const std::unordered_map<AbstractTicket::TicketType, unsigned> ticket_extension_prices;
-        static bool is_service_tourniquet(unsigned tourniquet_id);
     };
 }

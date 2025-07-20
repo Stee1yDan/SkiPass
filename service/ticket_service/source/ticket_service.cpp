@@ -1,23 +1,10 @@
 #include "ticket_service.hpp"
 
 namespace SkiPass {
-    const std::unordered_map<unsigned, bool> TicketService::service_tourniquet_registry {
-        std::pair{0, false},
-        std::pair{1, false},
-        std::pair{2, false},
-        std::pair{3, false},
-        std::pair{4, false},
-        std::pair{5, true}
-    };
-
     const std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::ticket_extension_prices {
         std::pair{AbstractTicket::TicketType::LIMITED, 50},
         std::pair{AbstractTicket::TicketType::TEMPORARY, 200}
     };
-
-    bool TicketService::is_service_tourniquet(unsigned tourniquet_id) {
-        return service_tourniquet_registry.at(tourniquet_id);
-    }
 
     TicketService::TicketService(std::shared_ptr<ITicketRepository> repository) {
         repository_ = repository;
@@ -60,20 +47,19 @@ namespace SkiPass {
             return pass_operation_status::no_such_ticket_found;
         }
 
-        if (!ticket->get()->can_pass()) {
-            if (ticket->get()->ticket_type == AbstractTicket::TicketType::LIMITED)
+        if (!ticket->get()->can_pass(tourniquet_id)) {
+            auto ticket_type = ticket->get()->ticket_type;
+            if (ticket_type == AbstractTicket::TicketType::LIMITED)
                 return pass_operation_status::no_passes_left;
 
-            if (ticket->get()->ticket_type == AbstractTicket::TicketType::TEMPORARY)
+            if (ticket_type == AbstractTicket::TicketType::TEMPORARY)
                 return pass_operation_status::ticket_expired;
+
+            if (ticket_type == AbstractTicket::TicketType::SERVICE)
+                return pass_operation_status::wrong_tourniquet;
         }
 
-        if (!is_service_tourniquet(tourniquet_id) &&
-            ticket->get()->ticket_type == AbstractTicket::TicketType::SERVICE) {
-            return pass_operation_status::wrong_tourniquet;
-        }
-
-        ticket->get()->pass();
+        ticket->get()->pass(tourniquet_id);
 
         return pass_operation_status::success;
     }
@@ -108,8 +94,6 @@ namespace SkiPass {
             return BalanceOperation(balance_operation_status::invalid_ticket_type,0);
         }
 
-
-
         auto funds_needed = extension_units * ticket_extension_prices.at(ticket_type);
 
         if (funds_needed > funds) {
@@ -119,8 +103,6 @@ namespace SkiPass {
         if (!ticket->get()->extend_ticket(extension_units)) {
             return BalanceOperation(balance_operation_status::operation_declined,0);
         }
-
-
 
         auto change = funds - funds_needed;
         return BalanceOperation(balance_operation_status::success,change);

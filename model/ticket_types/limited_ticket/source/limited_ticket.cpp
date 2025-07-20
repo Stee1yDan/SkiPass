@@ -2,19 +2,19 @@
 
 #include <format>
 
-bool SkiPass::LimitedTicket::pass() {
+bool SkiPass::LimitedTicket::pass(unsigned tourniquet_id) {
     try {
         auto balance_unit = std::stoll(balance);
         balance = std::to_string(--balance_unit);
-        return true;
+        return tourniquet_exists(tourniquet_id);
     }
     catch (const std::exception& e) {
         return false;
     }
 }
 
-bool SkiPass::LimitedTicket::can_pass() {
-    return std::stoll(balance) > 0;
+bool SkiPass::LimitedTicket::can_pass(unsigned tourniquet_id) {
+    return std::stoll(balance) > 0 && AbstractTicket::tourniquet_exists(tourniquet_id);;
 }
 
 bool SkiPass::LimitedTicket::extend_ticket(extension_unit_t value) {

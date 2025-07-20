@@ -6,9 +6,9 @@
 namespace SkiPass {
     class TemporaryTicket : public AbstractTicket {
     public:
-        bool pass() override;
+        bool pass(unsigned tourniquet_id) override;
 
-        bool can_pass() override;
+        bool can_pass(unsigned tourniquet_id) override;
 
         TemporaryTicket(ticket_id_t id,
                         const std::string &full_name,

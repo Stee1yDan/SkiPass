@@ -3,18 +3,18 @@
 
 #include <chrono>
 
-bool SkiPass::TemporaryTicket::pass() {
-    return true;
+bool SkiPass::TemporaryTicket::pass(unsigned tourniquet_id) {
+    return tourniquet_exists(tourniquet_id);
 }
 
-bool SkiPass::TemporaryTicket::can_pass() {
+bool SkiPass::TemporaryTicket::can_pass(unsigned tourniquet_id) {
     try {
         auto ticket_expiration_date = TimeUtils::convert_string_to_date(balance);
 
         auto now = std::chrono::system_clock::now();
         auto today = std::chrono::floor<std::chrono::days>(now);
 
-        return std::chrono::sys_days{ticket_expiration_date} >= today;
+        return std::chrono::sys_days{ticket_expiration_date} >= today && tourniquet_exists(tourniquet_id);
     }
     catch (...) {
         return false;
