@@ -18,6 +18,7 @@ namespace SkiPass {
         virtual void on_show_all_tickets() = 0;
         virtual void on_show_ticket_info() = 0;
         virtual void on_pass() = 0;
+        virtual void on_can_pass() = 0;
     };
 
 } // namespace banking

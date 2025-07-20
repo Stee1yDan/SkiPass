@@ -37,10 +37,11 @@ namespace SkiPass {
             std::cout << "\nBanking System Menu:\n"
                       << "1. Create Ticket\n"
                       << "2. Show Balance\n"
-                      << "3. Show Ticket Info\n"
-                      << "4. Pass through tourniquet\n"
-                      << "5. Extend ticket\n"
-                      << "7. Show all tickets\n"
+                      << "3. Extend Ticket Balance\n"
+                      << "4. Show Ticket Info\n"
+                      << "5. Pass Through Tourniquet\n"
+                      << "6. Can I Pass Through Tourniquet?\n"
+                      << "7. Show All Tickets\n"
                       << "8. Delete Ticket\n"
                       << "9. Exit\n";
 
@@ -49,9 +50,10 @@ namespace SkiPass {
             switch (choice) {
                 case 1: on_create_ticket(); break;
                 case 2: on_check_balance(); break;
-                case 3: on_show_ticket_info(); break;
-                case 4: on_pass(); break;
-                case 5: on_extend_ticket(); break;
+                case 3: on_extend_ticket(); break;
+                case 4: on_show_ticket_info(); break;
+                case 5: on_pass(); break;
+                case 6: on_can_pass(); break;
                 case 7: on_show_all_tickets(); break;
                 case 8: on_delete_ticket(); break;
                 case 9: return;
@@ -59,6 +61,7 @@ namespace SkiPass {
             }
         }
     }
+
 
     void CLIController::on_show_all_tickets() {
         view_->show_all_tickets(service_->get_repository());
@@ -129,6 +132,9 @@ namespace SkiPass {
             if (extendedTicket) {
                  view_->show_balance(extendedTicket);
             }
+            else {
+                view_->show_message("This type of ticket has no balance!");
+            }
         }
         catch (const std::exception& e) {
             view_->show_error(std::string("Error: ") + e.what());
@@ -172,6 +178,43 @@ namespace SkiPass {
 
                 case TicketService::pass_operation_status::success:
                     view_->show_message("Passed!");
+                    break;
+
+                case TicketService::pass_operation_status::no_passes_left:
+                    view_->show_message("No passes left! Please extend your ticket!");
+                    break;
+
+                case TicketService::pass_operation_status::ticket_expired:
+                    view_->show_message("Ticket is expired! Please extend your ticket!");
+                    break;
+
+                case TicketService::pass_operation_status::wrong_tourniquet:
+                    view_->show_message("Service ticket can't be used here!");
+                    break;
+
+                default:
+                    view_->show_message("Unknown pass result status!");
+                    break;
+            }
+        } catch (const std::exception& e) {
+            view_->show_error(std::string("Error: ") + e.what());
+        }
+    }
+
+    void CLIController::on_can_pass() {
+        try {
+            auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
+            auto tourniquet_id = get_input<unsigned>("Enter tourniquet number: ");
+
+            auto pass_result = service_->can_pass_through_tourniquet(ticket_id, tourniquet_id);
+
+            switch (pass_result) {
+                case TicketService::pass_operation_status::no_such_ticket_found:
+                    view_->show_message(std::format("No ticket with id {} is found", ticket_id));
+                    break;
+
+                case TicketService::pass_operation_status::success:
+                    view_->show_message("You can pass!");
                     break;
 
                 case TicketService::pass_operation_status::no_passes_left:
