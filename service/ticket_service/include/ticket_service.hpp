@@ -27,6 +27,7 @@ namespace SkiPass
             AbstractTicket::balance_unit_t balance;
         };
 
+
         enum class pass_operation_status {
             success,
             ticket_expired,
@@ -38,20 +39,21 @@ namespace SkiPass
 
         enum class ticket_management_operation_status {
             success,
-            invalid_extension_period,
+            no_such_ticket_found
+        };
+
+        enum class balance_operation_status {
+            success,
+            invalid_extension_unit,
+            invalid_ticket_type,
             not_enough_money,
-            operation_declined,
-            invalid_id
+            no_such_ticket_found,
+            operation_declined
         };
 
-        struct pass_result {
-            std::optional<std::unique_ptr<AbstractTicket::extension_unit_t>> balance;
-            pass_operation_status status;
-        };
-
-        struct balance_operation_result {
-            std::optional<std::unique_ptr<AbstractTicket::extension_unit_t>> balance;
-            pass_operation_status status;
+        struct BalanceOperation {
+            balance_operation_status status;
+            unsigned change;
         };
 
         std::size_t ticket_id_{};
@@ -62,12 +64,14 @@ namespace SkiPass
         [[nodiscard]] ticket_management_operation_status delete_ticket(AbstractTicket::ticket_id_t ticket);
         [[nodiscard]] std::optional<std::shared_ptr<AbstractTicket>> get_ticket(AbstractTicket::ticket_id_t id);
         [[nodiscard]] pass_operation_status pass_through_tourniquet(AbstractTicket::ticket_id_t id, unsigned tourniquet_id) const;
+        [[nodiscard]] BalanceOperation extend_ticket(AbstractTicket::ticket_id_t id, int extension_units, int funds) const;
+        [[nodiscard]] static std::unordered_map<AbstractTicket::TicketType, unsigned> get_extension_prices() ;
         [[nodiscard]] static TicketInfo get_ticket_info_struct(const std::shared_ptr<AbstractTicket>& ticket);
-
 
     private:
         std::shared_ptr<ITicketRepository> repository_;
         static const std::unordered_map<unsigned, bool> service_tourniquet_registry;
+        static const std::unordered_map<AbstractTicket::TicketType, unsigned> ticket_extension_prices;
         static bool is_service_tourniquet(unsigned tourniquet_id);
     };
 }

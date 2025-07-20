@@ -3,9 +3,14 @@
 #include <format>
 
 bool SkiPass::LimitedTicket::pass() {
-    auto balance_unit = std::stoll(balance);
-    balance = std::to_string(--balance_unit);
-    return true;
+    try {
+        auto balance_unit = std::stoll(balance);
+        balance = std::to_string(--balance_unit);
+        return true;
+    }
+    catch (const std::exception& e) {
+        return false;
+    }
 }
 
 bool SkiPass::LimitedTicket::can_pass() {
@@ -13,9 +18,16 @@ bool SkiPass::LimitedTicket::can_pass() {
 }
 
 bool SkiPass::LimitedTicket::extend_ticket(extension_unit_t value) {
-    long long balance_unit = std::stoll(balance);
-    balance_unit += value;
-    balance = std::to_string(balance_unit);
+    try {
+        long long balance_unit = std::stoll(balance);
+        balance_unit += value;
+        balance = std::to_string(balance_unit);
+        return true;
+    }
+    catch (const std::exception& e) {
+        return false;
+    }
+
 }
 
 SkiPass::AbstractTicket::balance_unit_t SkiPass::LimitedTicket::get_balance() {

@@ -14,6 +14,7 @@ namespace SkiPass {
         virtual void show_balance(std::shared_ptr<AbstractTicket> ticket) = 0;
         virtual void show_ticket_info(TicketService::TicketInfo ticket_info) = 0;
         virtual void show_message(const std::string& message) = 0;
+        virtual void show_extension_prices(std::unordered_map<AbstractTicket::TicketType, unsigned> map) = 0;
         virtual void show_error(const std::string& error) = 0;
         virtual void show_ticket_created(std::shared_ptr<AbstractTicket> ticket) = 0;
     };

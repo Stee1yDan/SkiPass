@@ -28,6 +28,8 @@ namespace SkiPass {
 
         void on_check_balance() override;
 
+        void on_extend_ticket() override;
+
         void on_pass() override;
 
     private:
