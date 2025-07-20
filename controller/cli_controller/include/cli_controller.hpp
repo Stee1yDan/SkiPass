@@ -33,6 +33,10 @@ namespace SkiPass {
 
         void on_show_all_tickets() override;
 
+        void on_change_owner() override;
+
+        void on_can_pass() override;
+
         void on_pass() override;
 
     private:

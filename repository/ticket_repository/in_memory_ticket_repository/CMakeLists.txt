@@ -7,4 +7,4 @@ add_library(in_memory_ticket_repository STATIC source/in_memory_ticket_repositor
 
 target_include_directories(in_memory_ticket_repository PUBLIC include)
 
-target_link_libraries(in_memory_ticket_repository PUBLIC ticket_repository abstract_ticket)
+target_link_libraries(in_memory_ticket_repository PUBLIC ticket_repository abstract_ticket extendable_ticket transferable_ticket)

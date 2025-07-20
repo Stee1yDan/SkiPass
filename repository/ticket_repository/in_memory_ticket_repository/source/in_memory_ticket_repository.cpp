@@ -1,9 +1,11 @@
 #include "in_memory_ticket_repository.hpp"
+#include "extendable_ticket.hpp"
 #include <ranges>
 #include <stdexcept>
 #include <format>
 
 namespace SkiPass {
+    class ExtendableTicket;
 
     InMemoryTicketRepository::ticket_id_t InMemoryTicketRepository::increment_ticket_id() {
         ticket_id_t_++;
@@ -61,13 +63,21 @@ namespace SkiPass {
         os << std::string(80, '-') << '\n';
 
         for (const auto& [key, ticket] : repo.tickets_) {
+            std::string balance = "0";
+            std::shared_ptr<ExtendableTicket> extendedTicket = std::dynamic_pointer_cast<ExtendableTicket>(ticket);
+            if (extendedTicket) {
+                balance = extendedTicket->get_balance();
+            }
+            else {
+                balance = "No balance for this type of ticket";
+            }
             os << std::format("{:<10} | {:<8} | {:<20} | {:<6} | {:<10} | {:<15}\n",
                              SkiPass::AbstractTicket::ticket_type_to_string(ticket->ticket_type),
                              ticket->id,
                              ticket->full_name,
                              ticket->age,
                              ticket->gender,
-                             ticket->get_balance());
+                             balance);
         }
         return os;
     }

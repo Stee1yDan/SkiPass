@@ -10,7 +10,7 @@
 namespace SkiPass {
     CLIView::~CLIView() = default;
 
-    void CLIView::show_balance(std::shared_ptr<AbstractTicket> ticket) {
+    void CLIView::show_balance(std::shared_ptr<ExtendableTicket> ticket) {
         std::cout << "Current balance: " << ticket->get_balance() << std::endl;
     }
 
@@ -23,7 +23,6 @@ namespace SkiPass {
         std::cout << "+-----Ticket Info-----" <<  std::endl;
         std::cout << "|Ticket Id: " << ticket_info.ticket_id << std::endl;
         std::cout << "|Ticket Type: " << ticket_info.ticket_type << std::endl;
-        std::cout << "|Balance: " << ticket_info.balance<< std::endl;
         std::cout << "+----------------------" <<  std::endl;
         std::cout << std::endl;
     }

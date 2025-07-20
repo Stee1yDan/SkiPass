@@ -1,7 +1,10 @@
 #include "ticket_service.hpp"
 
+#include "../../../model/extendable_ticket/include/extendable_ticket.hpp"
+#include "../../../model/transferable_ticket/include/transferable_ticket.hpp"
+
 namespace SkiPass {
-    const std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::ticket_extension_prices {
+    const std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::ticket_extension_prices{
         std::pair{AbstractTicket::TicketType::LIMITED, 50},
         std::pair{AbstractTicket::TicketType::TEMPORARY, 200}
     };
@@ -14,11 +17,11 @@ namespace SkiPass {
         return repository_->add_ticket(std::move(ticket));
     }
 
-    std::optional<std::shared_ptr<AbstractTicket>> TicketService::get_ticket(AbstractTicket::ticket_id_t id) {
+    std::optional<std::shared_ptr<AbstractTicket> > TicketService::get_ticket(AbstractTicket::ticket_id_t id) {
         return repository_->get_ticket(id);
     }
 
-    TicketService::TicketInfo TicketService::get_ticket_info_struct(const std::shared_ptr<AbstractTicket>& ticket) {
+    TicketService::TicketInfo TicketService::get_ticket_info_struct(const std::shared_ptr<AbstractTicket> &ticket) {
         TicketInfo ticket_info;
         ticket_info.full_name = ticket->full_name;
         ticket_info.age = ticket->age;
@@ -39,7 +42,8 @@ namespace SkiPass {
         return TicketService::ticket_management_operation_status::no_such_ticket_found;
     }
 
-    TicketService::pass_operation_status TicketService::pass_through_tourniquet(AbstractTicket::ticket_id_t id, //add tourniquet check
+    TicketService::pass_operation_status TicketService::pass_through_tourniquet(
+        AbstractTicket::ticket_id_t id, //add tourniquet check
         unsigned tourniquet_id) const {
         auto ticket = repository_->get_ticket(id);
 
@@ -65,9 +69,8 @@ namespace SkiPass {
     }
 
     TicketService::BalanceOperation TicketService::extend_ticket(AbstractTicket::ticket_id_t id,
-        int extension_units,
-        int funds) const {
-
+                                                                 int extension_units,
+                                                                 int funds) const {
         auto ticket = repository_->get_ticket(id);
 
         if (extension_units < 0) {
@@ -84,8 +87,10 @@ namespace SkiPass {
 
         auto ticket_type = ticket->get()->ticket_type;
 
-        if (ticket_type == AbstractTicket::TicketType::SERVICE) {
-            return BalanceOperation(balance_operation_status::invalid_ticket_type,0);
+        if (ticket_extension_prices.contains(ticket->get()->ticket_type)) {
+            funds_needed = extension_units * ticket_extension_prices.at(ticket->get()->ticket_type);
+        } else {
+            return BalanceOperation(balance_operation_status::invalid_ticket_type, 0);
         }
 
         if (ticket_type == AbstractTicket::TicketType::UNLIMITED) {
@@ -95,15 +100,44 @@ namespace SkiPass {
         auto funds_needed = extension_units * ticket_extension_prices.at(ticket_type);
 
         if (funds_needed > funds) {
-            return BalanceOperation(balance_operation_status::not_enough_money,0);
-        }
-
-        if (!ticket->get()->extend_ticket(extension_units)) {
-            return BalanceOperation(balance_operation_status::operation_declined,0);
+            return BalanceOperation(balance_operation_status::not_enough_money, 0);
         }
 
         auto change = funds - funds_needed;
-        return BalanceOperation(balance_operation_status::success,change);
+
+        std::shared_ptr<ExtendableTicket> extendable_ticket = std::dynamic_pointer_cast<ExtendableTicket>(ticket.value());
+
+        if (extendable_ticket) {
+            *extendable_ticket += extension_units;
+            return BalanceOperation(balance_operation_status::success, change);
+        }
+
+        return BalanceOperation(balance_operation_status::operation_declined, 0);
+    }
+
+    TicketService::pass_operation_status TicketService::can_pass_through_tourniquet(AbstractTicket::ticket_id_t id,
+        unsigned tourniquet_id) const {
+        auto ticket = repository_->get_ticket(id);
+
+        if (!ticket.has_value()) {
+            return pass_operation_status::no_such_ticket_found;
+        }
+
+        if (!ticket->get()->can_pass(tourniquet_id)) {
+            auto ticket_type = ticket->get()->ticket_type;
+            if (ticket_type == AbstractTicket::TicketType::LIMITED)
+                return pass_operation_status::no_passes_left;
+
+            if (ticket_type == AbstractTicket::TicketType::TEMPORARY)
+                return pass_operation_status::ticket_expired;
+
+            if (ticket_type == AbstractTicket::TicketType::SERVICE)
+                return pass_operation_status::wrong_tourniquet;
+        }
+
+        if (ticket->get()->can_pass(tourniquet_id)) return pass_operation_status::success;
+
+        return pass_operation_status::operation_declined;
     }
 
     std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::get_extension_prices() {
@@ -112,5 +146,24 @@ namespace SkiPass {
 
     std::shared_ptr<ITicketRepository> TicketService::get_repository() {
         return repository_;
+    }
+
+    TicketService::ticket_management_operation_status TicketService::change_owner(AbstractTicket::ticket_id_t id,
+        std::string new_name) const {
+        auto ticket = repository_->get_ticket(id);
+        std::shared_ptr<TransferableTicket> transferable_ticket = std::dynamic_pointer_cast<TransferableTicket>(ticket.value());
+
+        if (!ticket.has_value()) {
+            return ticket_management_operation_status::no_such_ticket_found;
+        }
+
+        if (!transferable_ticket) {
+            return ticket_management_operation_status::wrong_type_of_ticket;
+        }
+
+        (*transferable_ticket)(new_name);
+
+        return ticket_management_operation_status::success;
+
     }
 }

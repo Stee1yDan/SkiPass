@@ -34,31 +34,36 @@ namespace SkiPass {
 
     void CLIController::run() {
         while (true) {
-            std::cout << "\nBanking System Menu:\n"
+            std::cout << "\nSkiPass System Menu:\n"
                       << "1. Create Ticket\n"
                       << "2. Show Balance\n"
-                      << "3. Show Ticket Info\n"
-                      << "4. Pass through tourniquet\n"
-                      << "5. Extend ticket\n"
-                      << "7. Show all tickets\n"
-                      << "8. Delete Ticket\n"
-                      << "9. Exit\n";
+                      << "3. Extend Ticket\n"
+                      << "4. Change Ticket Owner\n"
+                      << "5. Show Ticket Info\n"
+                      << "6. Pass Through Tourniquet\n"
+                      << "7. Can I Pass Through Tourniquet?\n"
+                      << "8. Show All Tickets\n"
+                      << "9. Delete Ticket\n"
+                      << "A. Exit\n";
 
-            int choice = get_input<int>("Enter choice: ");
+            int choice = get_input<char>("Enter choice: ");
 
             switch (choice) {
-                case 1: on_create_ticket(); break;
-                case 2: on_check_balance(); break;
-                case 3: on_show_ticket_info(); break;
-                case 4: on_pass(); break;
-                case 5: on_extend_ticket(); break;
-                case 7: on_show_all_tickets(); break;
-                case 8: on_delete_ticket(); break;
-                case 9: return;
+                case '1': on_create_ticket(); break;
+                case '2': on_check_balance(); break;
+                case '3': on_extend_ticket(); break;
+                case '4': on_change_owner(); break;
+                case '5': on_show_ticket_info(); break;
+                case '6': on_pass(); break;
+                case '7': on_can_pass(); break;
+                case '8': on_show_all_tickets(); break;
+                case '9': on_delete_ticket(); break;
+                case 'A': return;
                 default: view_->show_error("Invalid choice"); break;
             }
         }
     }
+
 
     void CLIController::on_show_all_tickets() {
         view_->show_all_tickets(service_->get_repository());
@@ -90,7 +95,6 @@ namespace SkiPass {
             }
 
             std::shared_ptr<AbstractTicket> ticket = ticket_types.at(ticket_type)(*this);
-            view_->show_ticket_info(SkiPass::TicketService::get_ticket_info_struct(ticket));
             auto saved_ticket = service_->add_ticket(ticket);
             view_->show_ticket_info(SkiPass::TicketService::get_ticket_info_struct(saved_ticket));
         } catch (const std::exception& e) {
@@ -123,8 +127,14 @@ namespace SkiPass {
             if (ticket.has_value()) {
                 view_->show_balance(ticket.value());
             }
+
+            std::shared_ptr<ExtendableTicket> extendedTicket = std::dynamic_pointer_cast<ExtendableTicket>(ticket.value());
+
+            if (extendedTicket) {
+                 view_->show_balance(extendedTicket);
+            }
             else {
-                view_->show_message("No such ticket found!");
+                view_->show_message("This type of ticket has no balance!");
             }
         }
         catch (const std::exception& e) {
@@ -192,6 +202,43 @@ namespace SkiPass {
         }
     }
 
+    void CLIController::on_can_pass() {
+        try {
+            auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
+            auto tourniquet_id = get_input<unsigned>("Enter tourniquet number: ");
+
+            auto pass_result = service_->can_pass_through_tourniquet(ticket_id, tourniquet_id);
+
+            switch (pass_result) {
+                case TicketService::pass_operation_status::no_such_ticket_found:
+                    view_->show_message(std::format("No ticket with id {} is found", ticket_id));
+                    break;
+
+                case TicketService::pass_operation_status::success:
+                    view_->show_message("You can pass!");
+                    break;
+
+                case TicketService::pass_operation_status::no_passes_left:
+                    view_->show_message("No passes left! Please extend your ticket!");
+                    break;
+
+                case TicketService::pass_operation_status::ticket_expired:
+                    view_->show_message("Ticket is expired! Please extend your ticket!");
+                    break;
+
+                case TicketService::pass_operation_status::wrong_tourniquet:
+                    view_->show_message("Service ticket can't be used here!");
+                    break;
+
+                default:
+                    view_->show_message("Unknown pass result status!");
+                    break;
+            }
+        } catch (const std::exception& e) {
+            view_->show_error(std::string("Error: ") + e.what());
+        }
+    }
+
     void CLIController::on_extend_ticket() {
         try {
             view_->show_extension_prices(SkiPass::TicketService::get_extension_prices());
@@ -214,6 +261,10 @@ namespace SkiPass {
                     view_->show_message("Invalid value for the purchase!");
                     break;
 
+                case TicketService::balance_operation_status::no_such_ticket_found:
+                    view_->show_message("No such ticket found!");
+                    break;
+
                 case TicketService::balance_operation_status::success:
                     view_->show_message("Ticket was extended successfully!");
                     view_->show_message(std::format("Your change: {} RUB", res.change));
@@ -228,6 +279,34 @@ namespace SkiPass {
         }
     }
 
+    void CLIController::on_change_owner() {
+        try {
+            auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
+            auto funds = get_input<std::string>("Enter new owner name: ");
+
+            auto res = service_->change_owner(ticket_id, funds);
+
+            switch (res) {
+                case TicketService::ticket_management_operation_status::no_such_ticket_found:
+                    view_->show_message("No such ticket found!");
+                    break;
+
+                case TicketService::ticket_management_operation_status::wrong_type_of_ticket:
+                    view_->show_message("Can't change owner for this type of ticket");
+                    break;
+
+                case TicketService::ticket_management_operation_status::success:
+                    view_->show_message("Owner changed successfully!");
+                    break;
+
+                default:
+                    view_->show_message("Unknown extension result status!");
+                    break;
+            }
+        } catch (const std::exception& e) {
+            view_->show_error(std::string("Error: ") + e.what());
+        }
+    }
 
     std::shared_ptr<AbstractTicket> CLIController::create_unlimited() {
         auto name = get_input<std::string>("Enter your name: ");

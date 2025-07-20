@@ -20,5 +20,3 @@ std::shared_ptr<SkiPass::AbstractTicket> SkiPass::ServiceTicket::clone() const {
     auto new_ticket = std::make_shared<ServiceTicket>(id, full_name, age, gender, ticket_type, balance);
     return new_ticket;
 }
-
-SkiPass::ServiceTicket::~ServiceTicket() = default;

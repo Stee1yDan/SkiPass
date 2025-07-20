@@ -9,7 +9,7 @@ namespace SkiPass {
 
         ~CLIView() override;
 
-        void show_balance(std::shared_ptr<AbstractTicket> ticket) override;
+        void show_balance(std::shared_ptr<ExtendableTicket> ticket) override;
 
         void show_ticket_info(TicketService::TicketInfo ticket_info) override;
 

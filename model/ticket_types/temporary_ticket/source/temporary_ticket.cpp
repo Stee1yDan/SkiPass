@@ -34,12 +34,17 @@ bool SkiPass::TemporaryTicket::extend_ticket(extension_unit_t value) {
 }
 
 SkiPass::AbstractTicket::balance_unit_t SkiPass::TemporaryTicket::get_balance() {
-    return std::format("Valid until {} 00:00",balance);
+    return std::format("Expires at {} 00:00",balance);
 }
 
 std::shared_ptr<SkiPass::AbstractTicket> SkiPass::TemporaryTicket::clone() const {
     auto new_ticket = std::make_shared<TemporaryTicket>(id, full_name, age, gender, ticket_type, balance);
     return new_ticket;
+}
+
+SkiPass::ExtendableTicket & SkiPass::TemporaryTicket::operator+=(const extension_unit_t &amount) {
+    extend_ticket(amount);
+    return *this;
 }
 
 SkiPass::TemporaryTicket::~TemporaryTicket() = default;
