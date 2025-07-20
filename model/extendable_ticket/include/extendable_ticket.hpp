@@ -16,6 +16,8 @@ namespace SkiPass {
 
         virtual balance_unit_t get_balance() = 0;
 
+        virtual ExtendableTicket& operator+=(const extension_unit_t& amount);
+
         ~ExtendableTicket() override;
 
     };

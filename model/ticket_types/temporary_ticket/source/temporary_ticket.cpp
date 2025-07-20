@@ -42,4 +42,9 @@ std::shared_ptr<SkiPass::AbstractTicket> SkiPass::TemporaryTicket::clone() const
     return new_ticket;
 }
 
+SkiPass::ExtendableTicket & SkiPass::TemporaryTicket::operator+=(const extension_unit_t &amount) {
+    extend_ticket(amount);
+    return *this;
+}
+
 SkiPass::TemporaryTicket::~TemporaryTicket() = default;

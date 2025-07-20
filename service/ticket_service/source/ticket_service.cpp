@@ -101,7 +101,7 @@ namespace SkiPass {
         std::shared_ptr<ExtendableTicket> extendable_ticket = std::dynamic_pointer_cast<ExtendableTicket>(ticket.value());
 
         if (extendable_ticket) {
-            extendable_ticket->extend_ticket(extension_units);
+            *extendable_ticket += extension_units;
             return BalanceOperation(balance_operation_status::success, change);
         }
 

@@ -46,19 +46,19 @@ namespace SkiPass {
                       << "9. Delete Ticket\n"
                       << "A. Exit\n";
 
-            int choice = get_input<int>("Enter choice: ");
+            int choice = get_input<char>("Enter choice: ");
 
             switch (choice) {
-                case 1: on_create_ticket(); break;
-                case 2: on_check_balance(); break;
-                case 3: on_extend_ticket(); break;
-                case 4: on_change_owner(); break;
-                case 5: on_show_ticket_info(); break;
-                case 6: on_pass(); break;
-                case 7: on_can_pass(); break;
-                case 8: on_show_all_tickets(); break;
-                case 9: on_delete_ticket(); break;
-                case 10: return;
+                case '1': on_create_ticket(); break;
+                case '2': on_check_balance(); break;
+                case '3': on_extend_ticket(); break;
+                case '4': on_change_owner(); break;
+                case '5': on_show_ticket_info(); break;
+                case '6': on_pass(); break;
+                case '7': on_can_pass(); break;
+                case '8': on_show_all_tickets(); break;
+                case '9': on_delete_ticket(); break;
+                case 'A': return;
                 default: view_->show_error("Invalid choice"); break;
             }
         }
@@ -95,7 +95,6 @@ namespace SkiPass {
             }
 
             std::shared_ptr<AbstractTicket> ticket = ticket_types.at(ticket_type)(*this);
-            view_->show_ticket_info(SkiPass::TicketService::get_ticket_info_struct(ticket));
             auto saved_ticket = service_->add_ticket(ticket);
             view_->show_ticket_info(SkiPass::TicketService::get_ticket_info_struct(saved_ticket));
         } catch (const std::exception& e) {

@@ -28,5 +28,7 @@ namespace SkiPass {
         [[nodiscard]] std::shared_ptr<AbstractTicket> clone() const override;
 
         ~LimitedTicket() override;
+
+        ExtendableTicket & operator+=(const extension_unit_t &amount) override;
     };
 }

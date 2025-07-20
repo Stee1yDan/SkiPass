@@ -30,6 +30,11 @@ bool SkiPass::LimitedTicket::extend_ticket(extension_unit_t value) {
 
 }
 
+SkiPass::ExtendableTicket & SkiPass::LimitedTicket::operator+=(const extension_unit_t &amount) {
+    extend_ticket(amount);
+    return *this;
+}
+
 SkiPass::AbstractTicket::balance_unit_t SkiPass::LimitedTicket::get_balance() {
     return std::format("Passes left - {}",balance);
 }
