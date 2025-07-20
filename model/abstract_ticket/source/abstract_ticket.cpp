@@ -14,10 +14,6 @@ namespace SkiPass {
     };
 
 
-    AbstractTicket::AbstractTicket(ticket_id_t id, const std::string &string, unsigned age, const gender_t &gender,
-        TicketType ticket) {
-    }
-
     std::string AbstractTicket::ticket_type_to_string(AbstractTicket::TicketType type) {
         switch(type) {
             case AbstractTicket::TicketType::LIMITED:   return "LIMITED";

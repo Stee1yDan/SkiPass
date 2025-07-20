@@ -1,5 +1,7 @@
 #include "ticket_service.hpp"
 
+#include "../../../model/extendable_ticket/include/extendable_ticket.hpp"
+
 namespace SkiPass {
     const std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::ticket_extension_prices {
         std::pair{AbstractTicket::TicketType::LIMITED, 50},
@@ -24,7 +26,6 @@ namespace SkiPass {
         ticket_info.age = ticket->age;
         ticket_info.gender = ticket->gender;
         ticket_info.ticket_type = ticket->ticket_type;
-        ticket_info.balance = ticket->get_balance();
         ticket_info.ticket_id = ticket->id;
         return ticket_info;
     }
@@ -82,28 +83,28 @@ namespace SkiPass {
             return BalanceOperation(balance_operation_status::no_such_ticket_found, 0);
         }
 
-        auto ticket_type = ticket->get()->ticket_type;
+        auto funds_needed = 0;
 
-        if (ticket_type == AbstractTicket::TicketType::SERVICE) {
+        if (ticket_extension_prices.contains(ticket->get()->ticket_type)) {
+            funds_needed = extension_units * ticket_extension_prices.at(ticket->get()->ticket_type);
+        }
+        else {
             return BalanceOperation(balance_operation_status::invalid_ticket_type,0);
         }
-
-        if (ticket_type == AbstractTicket::TicketType::UNLIMITED) {
-            return BalanceOperation(balance_operation_status::invalid_ticket_type,0);
-        }
-
-        auto funds_needed = extension_units * ticket_extension_prices.at(ticket_type);
 
         if (funds_needed > funds) {
             return BalanceOperation(balance_operation_status::not_enough_money,0);
         }
 
-        if (!ticket->get()->extend_ticket(extension_units)) {
-            return BalanceOperation(balance_operation_status::operation_declined,0);
+        auto change = funds - funds_needed;
+
+        if (auto* rechargeable_ticket  = dynamic_cast<ExtendableTicket*>(ticket->get())) {
+            rechargeable_ticket->extend_ticket(extension_units);
+            return BalanceOperation(balance_operation_status::success,change);
         }
 
-        auto change = funds - funds_needed;
-        return BalanceOperation(balance_operation_status::success,change);
+        return BalanceOperation(balance_operation_status::operation_declined,0);
+
     }
 
     std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::get_extension_prices() {

@@ -3,13 +3,14 @@
 #include "view.hpp"
 
 namespace SkiPass {
+    class ExtendableTicket;
 
     class CLIView : public IView{
     public:
 
         ~CLIView() override;
 
-        void show_balance(std::shared_ptr<AbstractTicket> ticket) override;
+        void show_balance(ExtendableTicket& ticket) override;
 
         void show_ticket_info(TicketService::TicketInfo ticket_info) override;
 

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "abstract_ticket.hpp"
+#include "extendable_ticket.hpp"
 #include "ticket_service.hpp"
 
 namespace SkiPass {
@@ -11,7 +12,7 @@ namespace SkiPass {
     public:
         virtual ~IView() = default;
 
-        virtual void show_balance(std::shared_ptr<AbstractTicket> ticket) = 0;
+        virtual void show_balance(ExtendableTicket& ticket) = 0;
         virtual void show_ticket_info(TicketService::TicketInfo ticket_info) = 0;
         virtual void show_message(const std::string& message) = 0;
         virtual void show_extension_prices(std::unordered_map<AbstractTicket::TicketType, unsigned> map) = 0;

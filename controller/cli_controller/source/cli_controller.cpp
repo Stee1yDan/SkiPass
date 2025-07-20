@@ -120,11 +120,12 @@ namespace SkiPass {
             auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
             auto ticket = service_->get_ticket(ticket_id);
 
-            if (ticket.has_value()) {
-                view_->show_balance(ticket.value());
-            }
-            else {
+            if (!ticket.has_value()) {
                 view_->show_message("No such ticket found!");
+            }
+
+            if (auto* rechargeable_ticket  = dynamic_cast<ExtendableTicket*>(ticket->get())) {
+                 view_->show_balance(*rechargeable_ticket);
             }
         }
         catch (const std::exception& e) {
@@ -233,8 +234,7 @@ namespace SkiPass {
         auto name = get_input<std::string>("Enter your name: ");
         auto age = get_input<unsigned>("Enter your age: ");
         auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
-        auto balance = "Unlimited";
-        return std::make_shared<UnlimitedTicket>(0,name,age,gender,AbstractTicket::TicketType::UNLIMITED, balance);
+        return std::make_shared<UnlimitedTicket>(0,name,age,gender,AbstractTicket::TicketType::UNLIMITED);
     }
 
     std::shared_ptr<AbstractTicket> CLIController::create_limited() {
@@ -249,8 +249,7 @@ namespace SkiPass {
         auto name = get_input<std::string>("Enter your name: ");
         auto age = get_input<unsigned>("Enter your age: ");
         auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
-        auto balance = "Unlimited";
-        return std::make_shared<ServiceTicket>(0,name,age,gender,AbstractTicket::TicketType::SERVICE, balance);
+        return std::make_shared<ServiceTicket>(0,name,age,gender,AbstractTicket::TicketType::SERVICE);
     }
 
     std::shared_ptr<AbstractTicket> CLIController::create_temporary() {

@@ -8,4 +8,4 @@ add_library(limited_ticket STATIC source/limited_ticket.cpp)
 target_include_directories(limited_ticket PUBLIC
         include)
 
-target_link_libraries(limited_ticket PUBLIC abstract_ticket)
+target_link_libraries(limited_ticket PUBLIC abstract_ticket extendable_ticket)

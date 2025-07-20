@@ -2,9 +2,10 @@
 #include <chrono>
 
 #include "abstract_ticket.hpp"
+#include "../../../extendable_ticket/include/extendable_ticket.hpp"
 
 namespace SkiPass {
-    class TemporaryTicket : public AbstractTicket {
+    class TemporaryTicket : public ExtendableTicket {
     public:
         bool pass(unsigned tourniquet_id) override;
 
@@ -15,8 +16,8 @@ namespace SkiPass {
                         unsigned age,
                         const gender_t &gender,
                         TicketType,
-                        balance_unit_t balance)
-            : AbstractTicket(id, full_name, age, gender, TicketType::TEMPORARY, balance) {}
+                        const balance_unit_t& balance)
+            : ExtendableTicket(id, full_name, age, gender, TicketType::TEMPORARY, balance) {}
 
         [[nodiscard]] bool extend_ticket(extension_unit_t value) override;
 
