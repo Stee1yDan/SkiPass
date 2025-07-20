@@ -1,6 +1,7 @@
 #include "ticket_service.hpp"
 
 #include "../../../model/extendable_ticket/include/extendable_ticket.hpp"
+#include "../../../model/transferable_ticket/include/transferable_ticket.hpp"
 
 namespace SkiPass {
     const std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::ticket_extension_prices{
@@ -97,10 +98,10 @@ namespace SkiPass {
 
         auto change = funds - funds_needed;
 
-        std::shared_ptr<ExtendableTicket> extendedTicket = std::dynamic_pointer_cast<ExtendableTicket>(ticket.value());
+        std::shared_ptr<ExtendableTicket> extendable_ticket = std::dynamic_pointer_cast<ExtendableTicket>(ticket.value());
 
-        if (extendedTicket) {
-            extendedTicket->extend_ticket(extension_units);
+        if (extendable_ticket) {
+            extendable_ticket->extend_ticket(extension_units);
             return BalanceOperation(balance_operation_status::success, change);
         }
 
@@ -138,5 +139,26 @@ namespace SkiPass {
 
     std::shared_ptr<ITicketRepository> TicketService::get_repository() {
         return repository_;
+    }
+
+    TicketService::ticket_management_operation_status TicketService::change_owner(AbstractTicket::ticket_id_t id,
+        std::string new_name) const {
+        auto ticket = repository_->get_ticket(id);
+        std::shared_ptr<TransferableTicket> transferable_ticket = std::dynamic_pointer_cast<TransferableTicket>(ticket.value());
+
+        if (!ticket.has_value()) {
+            return ticket_management_operation_status::no_such_ticket_found;
+        }
+
+        if (!transferable_ticket) {
+            return ticket_management_operation_status::wrong_type_of_ticket;
+        }
+
+        if (transferable_ticket->change_owner(new_name)) {
+            return ticket_management_operation_status::success;
+        }
+
+        return ticket_management_operation_status::operation_declined;
+
     }
 }

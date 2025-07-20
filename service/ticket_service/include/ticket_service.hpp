@@ -39,7 +39,9 @@ namespace SkiPass
 
         enum class ticket_management_operation_status {
             success,
-            no_such_ticket_found
+            wrong_type_of_ticket,
+            no_such_ticket_found,
+            operation_declined
         };
 
         enum class balance_operation_status {
@@ -65,6 +67,7 @@ namespace SkiPass
         [[nodiscard]] std::optional<std::shared_ptr<AbstractTicket>> get_ticket(AbstractTicket::ticket_id_t id);
         [[nodiscard]] pass_operation_status pass_through_tourniquet(AbstractTicket::ticket_id_t id, unsigned tourniquet_id) const;
         [[nodiscard]] pass_operation_status can_pass_through_tourniquet(AbstractTicket::ticket_id_t id, unsigned tourniquet_id) const;
+        [[nodiscard]] ticket_management_operation_status change_owner(AbstractTicket::ticket_id_t id, std::string new_name) const;
         [[nodiscard]] BalanceOperation extend_ticket(AbstractTicket::ticket_id_t id, int extension_units, int funds) const;
         [[nodiscard]] std::shared_ptr<ITicketRepository> get_repository();
         [[nodiscard]] static std::unordered_map<AbstractTicket::TicketType, unsigned> get_extension_prices() ;
