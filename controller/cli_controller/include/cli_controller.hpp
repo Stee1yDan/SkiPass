@@ -18,6 +18,7 @@ namespace SkiPass {
 
         ~CLIController() override;
 
+
         void run() override;
 
         void on_create_ticket() override;
@@ -29,6 +30,8 @@ namespace SkiPass {
         void on_check_balance() override;
 
         void on_extend_ticket() override;
+
+        void on_show_all_tickets() override;
 
         void on_pass() override;
 

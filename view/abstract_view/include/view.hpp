@@ -17,6 +17,7 @@ namespace SkiPass {
         virtual void show_extension_prices(std::unordered_map<AbstractTicket::TicketType, unsigned> map) = 0;
         virtual void show_error(const std::string& error) = 0;
         virtual void show_ticket_created(std::shared_ptr<AbstractTicket> ticket) = 0;
+        virtual void show_all_tickets(std::shared_ptr<ITicketRepository> repository) = 0;
     };
 
 } // namespace banking

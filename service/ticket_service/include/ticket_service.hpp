@@ -65,6 +65,7 @@ namespace SkiPass
         [[nodiscard]] std::optional<std::shared_ptr<AbstractTicket>> get_ticket(AbstractTicket::ticket_id_t id);
         [[nodiscard]] pass_operation_status pass_through_tourniquet(AbstractTicket::ticket_id_t id, unsigned tourniquet_id) const;
         [[nodiscard]] BalanceOperation extend_ticket(AbstractTicket::ticket_id_t id, int extension_units, int funds) const;
+        [[nodiscard]] std::shared_ptr<ITicketRepository> get_repository();
         [[nodiscard]] static std::unordered_map<AbstractTicket::TicketType, unsigned> get_extension_prices() ;
         [[nodiscard]] static TicketInfo get_ticket_info_struct(const std::shared_ptr<AbstractTicket>& ticket);
 

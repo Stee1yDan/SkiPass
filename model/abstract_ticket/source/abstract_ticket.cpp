@@ -13,18 +13,23 @@ namespace SkiPass {
         std::pair{5, true}
     };
 
-    std::ostream & operator<<(std::ostream &os, AbstractTicket::TicketType ticket_type) {
-        switch (ticket_type) {
-            case AbstractTicket::TicketType::LIMITED:       return os << "LIMITED";
-            case AbstractTicket::TicketType::UNLIMITED:     return os << "UNLIMITED";
-            case AbstractTicket::TicketType::SERVICE:       return os << "SERVICE";
-            case AbstractTicket::TicketType::TEMPORARY:     return os << "TEMPORARY";
-            default:                        return os << "Unknown";
-        }
-    }
 
     AbstractTicket::AbstractTicket(ticket_id_t id, const std::string &string, unsigned age, const gender_t &gender,
         TicketType ticket) {
+    }
+
+    std::string AbstractTicket::ticket_type_to_string(AbstractTicket::TicketType type) {
+        switch(type) {
+            case AbstractTicket::TicketType::LIMITED:   return "LIMITED";
+            case AbstractTicket::TicketType::UNLIMITED: return "UNLIMITED";
+            case AbstractTicket::TicketType::SERVICE:   return "SERVICE";
+            case AbstractTicket::TicketType::TEMPORARY: return "TEMPORARY";
+            default:                                    return "UNKNOWN";
+        }
+    }
+
+    std::ostream & operator<<(std::ostream &os, AbstractTicket::TicketType ticket_type) {
+        return os << AbstractTicket::ticket_type_to_string(ticket_type);
     }
 
     bool AbstractTicket::tourniquet_exists(unsigned tourniquet_id) {

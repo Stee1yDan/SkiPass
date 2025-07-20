@@ -40,8 +40,9 @@ namespace SkiPass {
                       << "3. Show Ticket Info\n"
                       << "4. Pass through tourniquet\n"
                       << "5. Extend ticket\n"
-                      << "6. Delete Ticket\n"
-                      << "7. Exit\n";
+                      << "7. Show all tickets\n"
+                      << "8. Delete Ticket\n"
+                      << "9. Exit\n";
 
             int choice = get_input<int>("Enter choice: ");
 
@@ -51,11 +52,16 @@ namespace SkiPass {
                 case 3: on_show_ticket_info(); break;
                 case 4: on_pass(); break;
                 case 5: on_extend_ticket(); break;
-                case 6: on_delete_ticket(); break;
-                case 7: return;
+                case 7: on_show_all_tickets(); break;
+                case 8: on_delete_ticket(); break;
+                case 9: return;
                 default: view_->show_error("Invalid choice"); break;
             }
         }
+    }
+
+    void CLIController::on_show_all_tickets() {
+        view_->show_all_tickets(service_->get_repository());
     }
 
     void CLIController::on_show_ticket_info() {

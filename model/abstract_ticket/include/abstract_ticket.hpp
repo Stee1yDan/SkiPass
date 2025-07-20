@@ -40,6 +40,7 @@ namespace SkiPass {
 
     static bool tourniquet_exists(unsigned tourniquet_id);
     static bool is_service_tourniquet(unsigned tourniquet_id);
+    static std::string ticket_type_to_string(AbstractTicket::TicketType type);
 
     virtual ~AbstractTicket();
 

@@ -20,6 +20,8 @@ namespace SkiPass {
         void show_extension_prices(std::unordered_map<AbstractTicket::TicketType, unsigned> map) override;
 
         void show_ticket_created(std::shared_ptr<AbstractTicket> ticket) override;
+
+        void show_all_tickets(std::shared_ptr<ITicketRepository> repository) override;
     };
 
 }

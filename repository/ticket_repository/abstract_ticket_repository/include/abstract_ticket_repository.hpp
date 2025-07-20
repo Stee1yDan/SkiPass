@@ -1,5 +1,6 @@
 #pragma once
 #include <abstract_ticket.hpp>
+#include <map>
 
 #include <vector>
 #include <memory>
@@ -10,6 +11,7 @@ namespace SkiPass {
     public:
 
         using ticket_id_t = unsigned long long;
+        using TicketKey = std::pair<AbstractTicket::TicketType, ticket_id_t>;
 
         virtual ticket_id_t increment_ticket_id() = 0;
 
@@ -24,5 +26,7 @@ namespace SkiPass {
         ITicketRepository() = default;
 
         virtual ~ITicketRepository() = default;
+
+        std::multimap<TicketKey, std::shared_ptr<AbstractTicket>> tickets_;
     };
 }

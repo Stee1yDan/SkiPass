@@ -5,38 +5,70 @@
 
 namespace SkiPass {
 
-
     InMemoryTicketRepository::ticket_id_t InMemoryTicketRepository::increment_ticket_id() {
         ticket_id_t_++;
         return ticket_id_t_;
     }
 
     std::shared_ptr<AbstractTicket> InMemoryTicketRepository::add_ticket(std::shared_ptr<AbstractTicket> ticket) {
-        auto id = ticket_id_t_++;
+        auto id = increment_ticket_id();
         ticket->id = id;
-        tickets_[id] = ticket;
+        tickets_.emplace(TicketKey{ticket->ticket_type, id}, ticket);
+        id_to_ticket_.emplace(id, ticket);  // Maintain direct ID lookup
         return ticket;
     }
 
     bool InMemoryTicketRepository::delete_ticket(ticket_id_t id) {
-        auto ticket = tickets_.find(id);
-        if (ticket == tickets_.end()) {
+        auto id_it = id_to_ticket_.find(id);
+        if (id_it == id_to_ticket_.end()) {
             return false;
         }
-        tickets_.erase(ticket);
+
+        auto ticket = id_it->second;
+        TicketKey key{ticket->ticket_type, id};
+
+        auto range = tickets_.equal_range(key);
+        for (auto it = range.first; it != range.second; ++it) {
+            if (it->second->id == id) {
+                tickets_.erase(it);
+                break;
+            }
+        }
+        id_to_ticket_.erase(id_it);
+
         return true;
     }
 
     std::optional<std::shared_ptr<AbstractTicket>> InMemoryTicketRepository::get_ticket(ticket_id_t id) {
-        auto ticket = tickets_.find(id);
-        if (ticket == tickets_.end()) {
+        auto it = id_to_ticket_.find(id);
+        if (it == id_to_ticket_.end()) {
             return std::nullopt;
         }
-        return tickets_[id];
+        return it->second;
     }
 
     std::vector<std::shared_ptr<AbstractTicket>> InMemoryTicketRepository::get_all() {
-        auto value_view = std::views::values(tickets_);
-        return std::vector<std::shared_ptr<AbstractTicket>>{value_view.begin(), value_view.end()};
+        std::vector<std::shared_ptr<AbstractTicket>> result;
+        for (const auto& [key, ticket] : tickets_) {
+            result.push_back(ticket);
+        }
+        return result;
+    }
+
+    std::ostream& operator<<(std::ostream& os, const ITicketRepository& repo) {
+        os << std::format("{:<10} | {:<8} | {:<20} | {:<6} | {:<10} | {:<15}\n",
+                         "ID", "Type", "Name", "Age", "Gender", "Balance");
+        os << std::string(80, '-') << '\n';
+
+        for (const auto& [key, ticket] : repo.tickets_) {
+            os << std::format("{:<10} | {:<8} | {:<20} | {:<6} | {:<10} | {:<15}\n",
+                             SkiPass::AbstractTicket::ticket_type_to_string(ticket->ticket_type),
+                             ticket->id,
+                             ticket->full_name,
+                             ticket->age,
+                             ticket->gender,
+                             ticket->get_balance());
+        }
+        return os;
     }
 }

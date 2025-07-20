@@ -82,8 +82,6 @@ namespace SkiPass {
             return BalanceOperation(balance_operation_status::no_such_ticket_found, 0);
         }
 
-
-
         auto ticket_type = ticket->get()->ticket_type;
 
         if (ticket_type == AbstractTicket::TicketType::SERVICE) {
@@ -110,5 +108,9 @@ namespace SkiPass {
 
     std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::get_extension_prices() {
         return ticket_extension_prices;
+    }
+
+    std::shared_ptr<ITicketRepository> TicketService::get_repository() {
+        return repository_;
     }
 }

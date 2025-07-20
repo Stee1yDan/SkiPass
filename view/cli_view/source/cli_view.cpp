@@ -1,5 +1,9 @@
 #include "cli_view.hpp"
+
+#include <format>
+
 #include "abstract_ticket.hpp"
+#include "in_memory_ticket_repository.hpp"
 
 #include <iostream>
 
@@ -41,5 +45,13 @@ namespace SkiPass {
 
     void CLIView::show_ticket_created(std::shared_ptr<AbstractTicket> ticket) {
         std::cout << "Ticket Created! Its id is: " << ticket->id << std::endl;
+    }
+
+    void CLIView::show_all_tickets(std::shared_ptr<ITicketRepository> repository) {
+        if (auto repo = dynamic_cast<InMemoryTicketRepository*>(repository.get())) {
+            std::cout << *repo << std::endl;
+        } else {
+            std::cout << "Unsupported repository type" << std::endl;
+        }
     }
 }
