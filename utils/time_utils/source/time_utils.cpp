@@ -1,0 +1,39 @@
+#include "time_utils.hpp"
+
+namespace SkiPass {
+    std::chrono::year_month_day TimeUtils::get_current_date() {
+        auto now = std::chrono::system_clock::now();
+        auto today = std::chrono::floor<std::chrono::days>(now);
+        return std::chrono::year_month_day{today};
+    }
+
+    std::string TimeUtils::convert_date_to_string(const std::chrono::year_month_day &date) {
+        if (!date.ok()) {
+            throw std::runtime_error("Invalid date");
+        }
+
+        return std::format("{}-{:02}-{:02}",
+                          static_cast<int>(date.year()),
+                          static_cast<unsigned>(date.month()),
+                          static_cast<unsigned>(date.day()));
+    }
+
+    std::chrono::year_month_day TimeUtils::convert_string_to_date(const std::string &dateStr) {
+        int year, month, day;
+        char sep1, sep2;
+        std::istringstream iss(dateStr);
+
+        if (!(iss >> year >> sep1 >> month >> sep2 >> day) ||
+            sep1 != '-' || sep2 != '-') {
+            throw std::runtime_error("Invalid date format. Expected YYYY-MM-DD");
+            }
+
+        auto date = std::chrono::year{year}/month/day;
+        if (!date.ok()) {
+            throw std::runtime_error("Invalid calendar date");
+        }
+
+        return date;
+    }
+
+}
