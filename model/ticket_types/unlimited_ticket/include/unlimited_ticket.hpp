@@ -13,8 +13,13 @@ namespace SkiPass {
                         const std::string &full_name,
                         unsigned age,
                         const gender_t &gender,
-                        TicketType)
-            : AbstractTicket(id, full_name, age, gender, TicketType::UNLIMITED) {}
+                        TicketType,
+                        balance_unit_t balance)
+            : AbstractTicket(id, full_name, age, gender, TicketType::UNLIMITED, balance) {}
+
+        [[nodiscard]] bool extend_ticket(extension_unit_t value) override;
+
+        [[nodiscard]] balance_unit_t get_balance() override;
 
         [[nodiscard]] std::shared_ptr<AbstractTicket> clone() const override;
 

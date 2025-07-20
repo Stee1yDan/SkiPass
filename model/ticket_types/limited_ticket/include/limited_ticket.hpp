@@ -2,11 +2,10 @@
 #include <utility>
 
 #include "abstract_ticket.hpp"
-#include "extendable_ticket.hpp"
 
 
 namespace SkiPass {
-    class LimitedTicket : public ExtendableTicket{
+    class LimitedTicket : public AbstractTicket {
     public:
         bool pass(unsigned tourniquet_id) override;
 
@@ -18,8 +17,7 @@ namespace SkiPass {
                         const gender_t &gender,
                         TicketType,
                         balance_unit_t balance)
-            :  ExtendableTicket(id, full_name, age, gender, TicketType::LIMITED, balance) {
-        }
+            : AbstractTicket(id, full_name, age, gender, TicketType::LIMITED, balance) {}
 
         [[nodiscard]] bool extend_ticket(extension_unit_t value) override;
 

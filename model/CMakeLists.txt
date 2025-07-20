@@ -1,4 +1,2 @@
 add_subdirectory(abstract_ticket)
-add_subdirectory(extendable_ticket)
 add_subdirectory(ticket_types)
-add_subdirectory(transferable_ticket)

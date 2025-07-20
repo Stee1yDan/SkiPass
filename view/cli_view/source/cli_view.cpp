@@ -3,18 +3,15 @@
 #include <format>
 
 #include "abstract_ticket.hpp"
-#include "extendable_ticket.hpp"
 #include "in_memory_ticket_repository.hpp"
 
 #include <iostream>
 
-
-
 namespace SkiPass {
     CLIView::~CLIView() = default;
 
-    void CLIView::show_balance(ExtendableTicket& ticket) {
-        std::cout << "Current balance: " << ticket.get_balance() << std::endl;
+    void CLIView::show_balance(std::shared_ptr<AbstractTicket> ticket) {
+        std::cout << "Current balance: " << ticket->get_balance() << std::endl;
     }
 
     void CLIView::show_ticket_info(TicketService::TicketInfo ticket_info) {

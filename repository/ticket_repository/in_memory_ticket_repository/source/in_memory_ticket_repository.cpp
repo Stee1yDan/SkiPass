@@ -56,17 +56,18 @@ namespace SkiPass {
     }
 
     std::ostream& operator<<(std::ostream& os, const ITicketRepository& repo) {
-        os << std::format("{:<10} | {:<8} | {:<20} | {:<6} | {:<10}\n",
+        os << std::format("{:<10} | {:<8} | {:<20} | {:<6} | {:<10} | {:<15}\n",
                          "ID", "Type", "Name", "Age", "Gender", "Balance");
         os << std::string(80, '-') << '\n';
 
         for (const auto& [key, ticket] : repo.tickets_) {
-            os << std::format("{:<10} | {:<8} | {:<20} | {:<6} | {:<10}\n",
+            os << std::format("{:<10} | {:<8} | {:<20} | {:<6} | {:<10} | {:<15}\n",
                              SkiPass::AbstractTicket::ticket_type_to_string(ticket->ticket_type),
                              ticket->id,
                              ticket->full_name,
                              ticket->age,
-                             ticket->gender);
+                             ticket->gender,
+                             ticket->get_balance());
         }
         return os;
     }
