@@ -2,7 +2,9 @@
 
 #include <utility>
 
-#include "../../../model/extendable_ticket/include/extendable_ticket.hpp"
+#include "abstract_storage_unit_repository.hpp"
+#include "storage_unit.hpp"
+#include "extendable_ticket.hpp"
 #include "../../../model/transferable_ticket/include/transferable_ticket.hpp"
 
 namespace SkiPass {
@@ -17,7 +19,14 @@ namespace SkiPass {
     }
 
     std::shared_ptr<AbstractTicket> TicketService::add_ticket(std::shared_ptr<AbstractTicket> ticket) {
-        return ticket_repository_->add_ticket(std::move(ticket));
+        auto new_ticket  = ticket_repository_->add_ticket(std::move(ticket));
+
+        if (new_ticket.get()->ticket_type != AbstractTicket::TicketType::SERVICE) {
+            auto storage_unit = std::make_shared<StorageUnit>(0, new_ticket->id);
+            storage_unit_repository_.get()->add_unit(storage_unit);
+        }
+
+        return new_ticket;
     }
 
     std::optional<std::shared_ptr<AbstractTicket> > TicketService::get_ticket(AbstractTicket::ticket_id_t id) {
@@ -39,6 +48,7 @@ namespace SkiPass {
 
     TicketService::ticket_management_operation_status TicketService::delete_ticket(AbstractTicket::ticket_id_t id) {
         if (ticket_repository_->delete_ticket(id)) {
+            storage_unit_repository_.get()->delete_unit(id); // delete unit by ticket id
             return TicketService::ticket_management_operation_status::success;
         }
         return TicketService::ticket_management_operation_status::no_such_ticket_found;
