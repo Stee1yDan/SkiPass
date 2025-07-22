@@ -12,10 +12,12 @@
 
 namespace SkiPass
 {
+    class IStorageUnitRepository;
+
     class TicketService
     {
     public:
-        explicit TicketService(std::shared_ptr<ITicketRepository> repository);
+        explicit TicketService(std::shared_ptr<ITicketRepository> repository, const std::shared_ptr<IStorageUnitRepository> &unit_repository);
         using ticket_id_t = ITicketRepository::ticket_id_t;
 
         struct TicketInfo {
@@ -74,7 +76,8 @@ namespace SkiPass
         [[nodiscard]] static TicketInfo get_ticket_info_struct(const std::shared_ptr<AbstractTicket>& ticket);
 
     private:
-        std::shared_ptr<ITicketRepository> repository_;
-        static const std::unordered_map<AbstractTicket::TicketType, unsigned> ticket_extension_prices;
+        std::shared_ptr<ITicketRepository> ticket_repository_;
+        std::shared_ptr<IStorageUnitRepository> storage_unit_repository_;
+        static const std::unordered_map<AbstractTicket::TicketType, unsigned> ticket_extension_prices_;
     };
 }

@@ -5,7 +5,7 @@
 #include "storage_unit.hpp"
 
 namespace SkiPass {
-    std::shared_ptr<StorageUnit> InMemoryTicketRepository::add_unit(std::shared_ptr<StorageUnit> unit) {
+    std::shared_ptr<StorageUnit> InMemoryStorageUnitRepository::add_unit(std::shared_ptr<StorageUnit> unit) {
         if (!unit) {
             throw std::invalid_argument("Cannot add null storage unit");
         }
@@ -26,7 +26,7 @@ namespace SkiPass {
         return unit;
     }
 
-    bool InMemoryTicketRepository::delete_unit(StorageUnit::unit_id_t id) {
+    bool InMemoryStorageUnitRepository::delete_unit(StorageUnit::unit_id_t id) {
         auto it = units_.find(id);
         if (it == units_.end()) {
             return false;
@@ -38,7 +38,7 @@ namespace SkiPass {
         return true;
     }
 
-    std::optional<std::shared_ptr<StorageUnit>> InMemoryTicketRepository::get_unit(StorageUnit::unit_id_t id) const {
+    std::optional<std::shared_ptr<StorageUnit>> InMemoryStorageUnitRepository::get_unit(StorageUnit::unit_id_t id) const {
         auto it = units_.find(id);
         if (it == units_.end()) {
             return std::nullopt;
@@ -46,7 +46,7 @@ namespace SkiPass {
         return it->second;
     }
 
-    std::vector<std::shared_ptr<StorageUnit>> InMemoryTicketRepository::get_all() const {
+    std::vector<std::shared_ptr<StorageUnit>> InMemoryStorageUnitRepository::get_all() const {
         std::vector<std::shared_ptr<StorageUnit>> result;
         for (const auto& [id, unit] : units_) {
             result.push_back(unit);
@@ -54,7 +54,7 @@ namespace SkiPass {
         return result;
     }
 
-    std::optional<std::shared_ptr<StorageUnit>> InMemoryTicketRepository::get_unit_by_ticket(
+    std::optional<std::shared_ptr<StorageUnit>> InMemoryStorageUnitRepository::get_unit_by_ticket(
         AbstractTicket::ticket_id_t ticket_id) const {
         auto it = ticket_to_unit_.find(ticket_id);
         if (it == ticket_to_unit_.end()) {

@@ -7,7 +7,7 @@
 namespace SkiPass {
     class StorageUnit;
 
-    class InMemoryTicketRepository : public IStorageUnitRepository {
+    class InMemoryStorageUnitRepository : public IStorageUnitRepository {
     public:
         std::shared_ptr<StorageUnit> add_unit(std::shared_ptr<StorageUnit> unit) override;
         bool delete_unit(StorageUnit::unit_id_t id) override;
@@ -16,6 +16,8 @@ namespace SkiPass {
 
         std::optional<std::shared_ptr<StorageUnit>>
             get_unit_by_ticket(AbstractTicket::ticket_id_t ticket_id) const override;
+
+        ~InMemoryStorageUnitRepository() override = default;
 
     private:
         std::unordered_map<StorageUnit::unit_id_t, std::shared_ptr<StorageUnit>> units_;

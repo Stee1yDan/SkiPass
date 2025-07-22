@@ -15,6 +15,8 @@ target_link_libraries(skipass PUBLIC
         ticket_service
         skipass_app
         abstract_app_builder
+        abstract_storage_unit_repository
+        in_memory_storage_unit_repository
         in_memory_app_builder
         ticket_repository
         in_memory_ticket_repository

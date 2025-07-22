@@ -11,6 +11,8 @@ target_link_libraries(in_memory_app_builder PUBLIC
         abstract_app_builder
         ticket_service
         ticket_repository
+        abstract_storage_unit_repository
         cli_view
         in_memory_ticket_repository
+        in_memory_storage_unit_repository
 )

@@ -1,24 +1,27 @@
 #include "ticket_service.hpp"
 
+#include <utility>
+
 #include "../../../model/extendable_ticket/include/extendable_ticket.hpp"
 #include "../../../model/transferable_ticket/include/transferable_ticket.hpp"
 
 namespace SkiPass {
-    const std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::ticket_extension_prices{
+    const std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::ticket_extension_prices_{
         std::pair{AbstractTicket::TicketType::LIMITED, 50},
         std::pair{AbstractTicket::TicketType::TEMPORARY, 200}
     };
 
-    TicketService::TicketService(std::shared_ptr<ITicketRepository> repository) {
-        repository_ = repository;
+    TicketService::TicketService(std::shared_ptr<ITicketRepository> repository, const std::shared_ptr<IStorageUnitRepository> &unit_repository) {
+        ticket_repository_ = repository;
+        storage_unit_repository_ = unit_repository;
     }
 
     std::shared_ptr<AbstractTicket> TicketService::add_ticket(std::shared_ptr<AbstractTicket> ticket) {
-        return repository_->add_ticket(std::move(ticket));
+        return ticket_repository_->add_ticket(std::move(ticket));
     }
 
     std::optional<std::shared_ptr<AbstractTicket> > TicketService::get_ticket(AbstractTicket::ticket_id_t id) {
-        return repository_->get_ticket(id);
+        return ticket_repository_->get_ticket(id);
     }
 
     TicketService::TicketInfo TicketService::get_ticket_info_struct(const std::shared_ptr<AbstractTicket> &ticket) {
@@ -35,7 +38,7 @@ namespace SkiPass {
     }
 
     TicketService::ticket_management_operation_status TicketService::delete_ticket(AbstractTicket::ticket_id_t id) {
-        if (repository_->delete_ticket(id)) {
+        if (ticket_repository_->delete_ticket(id)) {
             return TicketService::ticket_management_operation_status::success;
         }
         return TicketService::ticket_management_operation_status::no_such_ticket_found;
@@ -44,7 +47,7 @@ namespace SkiPass {
     TicketService::pass_operation_status TicketService::pass_through_tourniquet(
         AbstractTicket::ticket_id_t id, //add tourniquet check
         unsigned tourniquet_id) const {
-        auto ticket = repository_->get_ticket(id);
+        auto ticket = ticket_repository_->get_ticket(id);
 
         if (!ticket.has_value()) {
             return pass_operation_status::no_such_ticket_found;
@@ -70,7 +73,7 @@ namespace SkiPass {
     TicketService::BalanceOperation TicketService::extend_ticket(AbstractTicket::ticket_id_t id,
                                                                  int extension_units,
                                                                  int funds) const {
-        auto ticket = repository_->get_ticket(id);
+        auto ticket = ticket_repository_->get_ticket(id);
 
         if (extension_units < 0) {
             return BalanceOperation(balance_operation_status::invalid_extension_unit, 0);
@@ -86,8 +89,8 @@ namespace SkiPass {
 
         auto funds_needed = 0;
 
-        if (ticket_extension_prices.contains(ticket->get()->ticket_type)) {
-            funds_needed = extension_units * ticket_extension_prices.at(ticket->get()->ticket_type);
+        if (ticket_extension_prices_.contains(ticket->get()->ticket_type)) {
+            funds_needed = extension_units * ticket_extension_prices_.at(ticket->get()->ticket_type);
         } else {
             return BalanceOperation(balance_operation_status::invalid_ticket_type, 0);
         }
@@ -110,7 +113,7 @@ namespace SkiPass {
 
     TicketService::pass_operation_status TicketService::can_pass_through_tourniquet(AbstractTicket::ticket_id_t id,
         unsigned tourniquet_id) const {
-        auto ticket = repository_->get_ticket(id);
+        auto ticket = ticket_repository_->get_ticket(id);
 
         if (!ticket.has_value()) {
             return pass_operation_status::no_such_ticket_found;
@@ -134,16 +137,16 @@ namespace SkiPass {
     }
 
     std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::get_extension_prices() {
-        return ticket_extension_prices;
+        return ticket_extension_prices_;
     }
 
     std::shared_ptr<ITicketRepository> TicketService::get_repository() {
-        return repository_;
+        return ticket_repository_;
     }
 
     TicketService::ticket_management_operation_status TicketService::change_owner(AbstractTicket::ticket_id_t id,
         std::string new_name) const {
-        auto ticket = repository_->get_ticket(id);
+        auto ticket = ticket_repository_->get_ticket(id);
         std::shared_ptr<TransferableTicket> transferable_ticket = std::dynamic_pointer_cast<TransferableTicket>(ticket.value());
 
         if (!ticket.has_value()) {

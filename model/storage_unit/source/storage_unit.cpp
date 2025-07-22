@@ -1,4 +1,4 @@
-#pragma once
+
 
 #include "storage_unit.hpp"
 
@@ -9,6 +9,10 @@ namespace SkiPass {
 
     StorageUnit::unit_id_t StorageUnit::get_storage_unit_id() const {
         return unit_id_t_;
+    }
+
+    bool StorageUnit::is_locked() {
+        return this->is_locked_;
     }
 
     void StorageUnit::lock_storage_unit() {
