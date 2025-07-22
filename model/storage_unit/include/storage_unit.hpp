@@ -1,16 +1,29 @@
 #pragma once
+#include "abstract_ticket.hpp"
 
 namespace SkiPass {
-    class IStorageUnit  {
+    class StorageUnit  {
     public:
-        virtual ~IStorageUnit() = default;
+        ~StorageUnit() = default;
 
         using unit_id_t = unsigned int;
 
-        [[nodiscard]] virtual unit_id_t get_storage_unit_id() const = 0;
+        [[nodiscard]] AbstractTicket::ticket_id_t get_linked_ticket_id() const;
 
-        virtual void lock_storage_unit() = 0;
+        [[nodiscard]] unit_id_t get_storage_unit_id() const;
 
-        virtual void open_storage_unit() = 0;
+        void lock_storage_unit();
+
+        void open_storage_unit();
+
+        StorageUnit(unit_id_t unit_id_t, AbstractTicket::ticket_id_t linked_ticket_id)
+            : unit_id_t_(unit_id_t),
+              linked_ticket_id_(linked_ticket_id) {
+        }
+
+    private:
+        unit_id_t unit_id_t_;
+        AbstractTicket::ticket_id_t linked_ticket_id_;
+        bool is_locked_{};
     };
 }
