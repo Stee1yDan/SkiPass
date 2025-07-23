@@ -12,7 +12,7 @@ namespace SkiPass {
 
         [[nodiscard]] unit_id_t get_storage_unit_id() const;
 
-        bool is_locked();
+        bool is_locked() const;
 
         void lock_storage_unit();
 
@@ -26,6 +26,6 @@ namespace SkiPass {
     private:
         unit_id_t unit_id_t_;
         AbstractTicket::ticket_id_t linked_ticket_id_;
-        bool is_locked_{};
+        bool is_locked_ = false;
     };
 }

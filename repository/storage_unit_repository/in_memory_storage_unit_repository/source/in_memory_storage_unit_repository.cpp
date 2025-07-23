@@ -72,7 +72,7 @@ namespace SkiPass {
             os << std::format("{:<10} | {:<15} | {:<10}\n",
                              unit->get_storage_unit_id(),
                              unit->get_linked_ticket_id(),
-                             unit->is_locked() ? "Locked" : "Unlocked");
+                             unit->is_locked() ? "Locked" : "Open");
         }
         return os;
     }

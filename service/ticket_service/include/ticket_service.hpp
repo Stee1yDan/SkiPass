@@ -9,6 +9,8 @@
 #include <limits>
 #include <unordered_map>
 
+#include "storage_unit.hpp"
+
 
 namespace SkiPass
 {
@@ -46,6 +48,15 @@ namespace SkiPass
             operation_declined
         };
 
+        enum class storage_management_operation_status {
+            success,
+            no_such_ticket_found,
+            no_storage_unit_found,
+            storage_unit_is_already_locked,
+            storage_unit_is_already_opened,
+            operation_declined
+        };
+
         enum class balance_operation_status {
             success,
             invalid_extension_unit,
@@ -60,6 +71,11 @@ namespace SkiPass
             unsigned change;
         };
 
+        struct StorageOperation {
+            storage_management_operation_status status;
+            std::shared_ptr<StorageUnit> unit;
+        };
+
         std::size_t ticket_id_{};
 
         explicit TicketService(ITicketRepository &repository);
@@ -71,9 +87,14 @@ namespace SkiPass
         [[nodiscard]] pass_operation_status can_pass_through_tourniquet(AbstractTicket::ticket_id_t id, unsigned tourniquet_id) const;
         [[nodiscard]] ticket_management_operation_status change_owner(AbstractTicket::ticket_id_t id, std::string new_name) const;
         [[nodiscard]] BalanceOperation extend_ticket(AbstractTicket::ticket_id_t id, int extension_units, int funds) const;
-        [[nodiscard]] std::shared_ptr<ITicketRepository> get_repository();
-        [[nodiscard]] static std::unordered_map<AbstractTicket::TicketType, unsigned> get_extension_prices() ;
+        [[nodiscard]] StorageOperation get_linked_storage_unit(AbstractTicket::ticket_id_t ticket);
+        [[nodiscard]] StorageOperation lock_storage_unit(AbstractTicket::ticket_id_t ticket);
+        [[nodiscard]] StorageOperation open_storage_unit(AbstractTicket::ticket_id_t ticket);
+        [[nodiscard]] static std::unordered_map<AbstractTicket::TicketType, unsigned> get_extension_prices();
         [[nodiscard]] static TicketInfo get_ticket_info_struct(const std::shared_ptr<AbstractTicket>& ticket);
+
+        [[nodiscard]] std::shared_ptr<ITicketRepository> get_ticket_repository();
+        [[nodiscard]] std::shared_ptr<IStorageUnitRepository> get_storage_unit_repository();
 
     private:
         std::shared_ptr<ITicketRepository> ticket_repository_;

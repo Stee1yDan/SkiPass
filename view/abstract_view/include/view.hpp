@@ -19,6 +19,8 @@ namespace SkiPass {
         virtual void show_error(const std::string& error) = 0;
         virtual void show_ticket_created(std::shared_ptr<AbstractTicket> ticket) = 0;
         virtual void show_all_tickets(std::shared_ptr<ITicketRepository> repository) = 0;
+        virtual void show_storage_unit(std::shared_ptr<StorageUnit> unit) = 0;
+        virtual void show_all_storage_units(std::shared_ptr<IStorageUnitRepository> repository) = 0;
     };
 
 } // namespace banking

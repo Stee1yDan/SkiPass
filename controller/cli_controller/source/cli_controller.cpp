@@ -43,8 +43,12 @@ namespace SkiPass {
                       << "6. Pass Through Tourniquet\n"
                       << "7. Can I Pass Through Tourniquet?\n"
                       << "8. Show All Tickets\n"
-                      << "9. Delete Ticket\n"
-                      << "A. Exit\n";
+                      << "9. Show Storage Unit\n"
+                      << "A. Open Storage Unit\n"
+                      << "B. Close Storage Unit\n"
+                      << "C. Show All Storage Units\n"
+                      << "D. Delete Ticket\n"
+                      << "E. Exit\n";
 
             int choice = get_input<char>("Enter choice: ");
 
@@ -57,8 +61,12 @@ namespace SkiPass {
                 case '6': on_pass(); break;
                 case '7': on_can_pass(); break;
                 case '8': on_show_all_tickets(); break;
-                case '9': on_delete_ticket(); break;
-                case 'A': return;
+                case '9': on_show_linked_storage_unit(); break;
+                case 'A': on_open_storage_unit(); break;
+                case 'B': on_lock_storage_unit(); break;
+                case 'C': on_show_all_storage_units(); break;
+                case 'D': on_delete_ticket(); break;
+                case 'E': return;
                 default: view_->show_error("Invalid choice"); break;
             }
         }
@@ -66,7 +74,11 @@ namespace SkiPass {
 
 
     void CLIController::on_show_all_tickets() {
-        view_->show_all_tickets(service_->get_repository());
+        view_->show_all_tickets(service_->get_ticket_repository());
+    }
+
+    void CLIController::on_show_all_storage_units() {
+        view_->show_all_storage_units(service_->get_storage_unit_repository());
     }
 
     void CLIController::on_show_ticket_info() {
@@ -162,6 +174,64 @@ namespace SkiPass {
                 return value;
             }
             view_->show_error("Invalid input, please try again");
+        }
+    }
+
+    void CLIController::on_show_linked_storage_unit() {
+        try {
+            auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
+            auto operation_status = service_->get_linked_storage_unit(ticket_id);
+
+            if (operation_status.status == TicketService::storage_management_operation_status::no_storage_unit_found) {
+                view_->show_message(std::format("No storage for ticket with id {} is found!", ticket_id));
+            }
+            else if (operation_status.status == TicketService::storage_management_operation_status::success) {
+                view_->show_storage_unit(operation_status.unit);
+            }
+        } catch (const std::exception& e) {
+            view_->show_error(std::string("Error: ") + e.what());
+        }
+    }
+
+    void CLIController::on_open_storage_unit() {
+        try {
+            auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
+            auto operation_status = service_->open_storage_unit(ticket_id);
+
+            if (operation_status.status == TicketService::storage_management_operation_status::no_storage_unit_found) {
+                view_->show_message(std::format("No storage for ticket with id {} is found!", ticket_id));
+            }
+            if (operation_status.status == TicketService::storage_management_operation_status::storage_unit_is_already_opened) {
+                view_->show_message("The storage unit is opened already!");
+            }
+            else if (operation_status.status == TicketService::storage_management_operation_status::success) {
+                view_->show_message("The storage unit was opened successfully!");
+                view_->show_storage_unit(operation_status.unit);
+            }
+
+        } catch (const std::exception& e) {
+            view_->show_error(std::string("Error: ") + e.what());
+        }
+    }
+
+    void CLIController::on_lock_storage_unit() {
+        try {
+            auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
+            auto operation_status = service_->lock_storage_unit(ticket_id);
+
+            if (operation_status.status == TicketService::storage_management_operation_status::no_storage_unit_found) {
+                view_->show_message(std::format("No storage for ticket with id {} is found!", ticket_id));
+            }
+            if (operation_status.status == TicketService::storage_management_operation_status::storage_unit_is_already_locked) {
+                view_->show_message("The storage unit is locked already!");
+            }
+            else if (operation_status.status == TicketService::storage_management_operation_status::success) {
+                view_->show_message("The storage unit was closed successfully!");
+                view_->show_storage_unit(operation_status.unit);
+            }
+
+        } catch (const std::exception& e) {
+            view_->show_error(std::string("Error: ") + e.what());
         }
     }
 

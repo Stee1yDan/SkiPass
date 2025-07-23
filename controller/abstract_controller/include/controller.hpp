@@ -20,6 +20,10 @@ namespace SkiPass {
         virtual void on_pass() = 0;
         virtual void on_change_owner() = 0;
         virtual void on_can_pass() = 0;
+        virtual void on_show_linked_storage_unit() = 0;
+        virtual void on_open_storage_unit() = 0;
+        virtual void on_lock_storage_unit() = 0;
+        virtual void on_show_all_storage_units() = 0;
     };
 
 } // namespace banking

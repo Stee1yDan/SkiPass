@@ -48,7 +48,8 @@ namespace SkiPass {
 
     TicketService::ticket_management_operation_status TicketService::delete_ticket(AbstractTicket::ticket_id_t id) {
         if (ticket_repository_->delete_ticket(id)) {
-            storage_unit_repository_.get()->delete_unit(id); // delete unit by ticket id
+            auto storage_unit = storage_unit_repository_->get_unit_by_ticket(id);
+            storage_unit_repository_->delete_unit(storage_unit->get()->get_storage_unit_id());
             return TicketService::ticket_management_operation_status::success;
         }
         return TicketService::ticket_management_operation_status::no_such_ticket_found;
@@ -146,11 +147,15 @@ namespace SkiPass {
         return pass_operation_status::operation_declined;
     }
 
+    std::shared_ptr<IStorageUnitRepository> TicketService::get_storage_unit_repository() {
+        return storage_unit_repository_;
+    }
+
     std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::get_extension_prices() {
         return ticket_extension_prices_;
     }
 
-    std::shared_ptr<ITicketRepository> TicketService::get_repository() {
+    std::shared_ptr<ITicketRepository> TicketService::get_ticket_repository() {
         return ticket_repository_;
     }
 
@@ -171,5 +176,43 @@ namespace SkiPass {
 
         return ticket_management_operation_status::success;
 
+    }
+
+    TicketService::StorageOperation TicketService::lock_storage_unit(AbstractTicket::ticket_id_t ticket_id) {
+        auto storage_unit = storage_unit_repository_->get_unit_by_ticket(ticket_id);
+        if (!storage_unit) {
+            return StorageOperation(storage_management_operation_status::no_storage_unit_found, std::shared_ptr<StorageUnit>(nullptr));
+        }
+
+        if (storage_unit->get()->is_locked()) {
+            return  StorageOperation(storage_management_operation_status::storage_unit_is_already_locked, storage_unit.value());;
+        }
+
+        storage_unit->get()->lock_storage_unit();
+
+        return  StorageOperation(storage_management_operation_status::success, storage_unit.value());;
+    }
+
+    TicketService::StorageOperation TicketService::open_storage_unit(AbstractTicket::ticket_id_t ticket_id) {
+        auto storage_unit = storage_unit_repository_->get_unit_by_ticket(ticket_id);
+        if (!storage_unit) {
+            return StorageOperation(storage_management_operation_status::no_storage_unit_found, std::shared_ptr<StorageUnit>(nullptr));
+        }
+
+        if (!storage_unit->get()->is_locked()) {
+            return  StorageOperation(storage_management_operation_status::storage_unit_is_already_opened, storage_unit.value());;
+        }
+
+        storage_unit->get()->open_storage_unit();
+
+        return  StorageOperation(storage_management_operation_status::success, storage_unit.value());;
+    }
+
+    TicketService::StorageOperation TicketService::get_linked_storage_unit(AbstractTicket::ticket_id_t ticket_id) {
+        auto storage_unit = storage_unit_repository_->get_unit_by_ticket(ticket_id);
+        if (!storage_unit) {
+            return StorageOperation(storage_management_operation_status::no_storage_unit_found, std::shared_ptr<StorageUnit>(nullptr));
+        }
+        return  StorageOperation(storage_management_operation_status::success, storage_unit.value());;
     }
 }

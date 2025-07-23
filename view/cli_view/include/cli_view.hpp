@@ -16,7 +16,11 @@ namespace SkiPass {
 
         void show_message(const std::string &message) override;
 
+        void show_storage_unit(std::shared_ptr<StorageUnit> unit) override;
+
         void show_error(const std::string &error) override;
+
+        void show_all_storage_units(std::shared_ptr<IStorageUnitRepository> repository) override;
 
         void show_extension_prices(std::unordered_map<AbstractTicket::TicketType, unsigned> map) override;
 

@@ -8,6 +8,7 @@
 
 #include <iostream>
 
+#include "../../../repository/storage_unit_repository/in_memory_storage_unit_repository/include/in_memory_storage_unit_repository.hpp"
 
 
 namespace SkiPass {
@@ -43,6 +44,22 @@ namespace SkiPass {
 
     void CLIView::show_error(const std::string& error) {
         std::cerr << "Error: " << error << std::endl;
+    }
+
+    void CLIView::show_storage_unit(std::shared_ptr<StorageUnit> unit) {
+        std::cout << "+-----Storage Info------" <<  std::endl;
+        std::cout << "|Storage unit id: " << unit->get_storage_unit_id() << std::endl;
+        std::cout << "|Linked ticket id: " << unit->get_linked_ticket_id() << std::endl;
+        std::cout << "|Status: " << (unit->is_locked() ? "Locked" : "Open") << std::endl;
+        std::cout << "+-----------------------" <<  std::endl;
+    }
+
+    void CLIView::show_all_storage_units(std::shared_ptr<IStorageUnitRepository> repository) {
+        if (auto repo = dynamic_cast<InMemoryStorageUnitRepository*>(repository.get())) {
+            std::cout << *repo << std::endl;
+        } else {
+            std::cout << "Unsupported repository type" << std::endl;
+        }
     }
 
     void CLIView::show_ticket_created(std::shared_ptr<AbstractTicket> ticket) {

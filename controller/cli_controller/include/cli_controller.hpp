@@ -27,6 +27,12 @@ namespace SkiPass {
 
         void on_show_ticket_info() override;
 
+        void on_show_linked_storage_unit() override;
+
+        void on_open_storage_unit() override;
+
+        void on_lock_storage_unit() override;
+
         void on_check_balance() override;
 
         void on_extend_ticket() override;
@@ -38,6 +44,8 @@ namespace SkiPass {
         void on_can_pass() override;
 
         void on_pass() override;
+
+        void on_show_all_storage_units() override;
 
     private:
         template<typename T>

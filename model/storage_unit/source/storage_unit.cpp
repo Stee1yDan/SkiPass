@@ -11,7 +11,7 @@ namespace SkiPass {
         return unit_id_t_;
     }
 
-    bool StorageUnit::is_locked() {
+    bool StorageUnit::is_locked() const {
         return this->is_locked_;
     }
 
