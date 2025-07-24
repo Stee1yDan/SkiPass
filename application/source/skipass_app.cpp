@@ -18,8 +18,10 @@ namespace SkiPass {
         std::shared_ptr<ITicketRepository> ticket_repository = builder->build_ticket_repository();
         std::shared_ptr<IStorageUnitRepository> storage_repository = builder->build_storage_unit_repository();
         std::shared_ptr<IView> view = builder->build_view();
-        std::shared_ptr<TicketService> ticket_service = builder->build_service(ticket_repository, storage_repository);
-        std::shared_ptr<IController> cli_controller = builder->build_controller(ticket_service,view);
+        std::shared_ptr<TicketService> ticket_service = builder->build_ticket_service(ticket_repository);
+        std::shared_ptr<StorageService> storage_service = builder->build_storage_service(storage_repository);
+        std::shared_ptr<TourniquetService> tourniquet_service = builder->build_tourniquet_service(ticket_repository);
+        std::shared_ptr<IController> cli_controller = builder->build_controller(ticket_service,storage_service,tourniquet_service,view);
         // auto ticket1 = std::make_shared<UnlimitedTicket>("fio",21,"M", AbstractTicket::TicketType::UNLIMITED);
         // auto ticket2 = std::make_shared<UnlimitedTicket>("fio",22,"M", AbstractTicket::TicketType::UNLIMITED);
         // ticket_service->add_ticket(ticket1);
@@ -30,7 +32,6 @@ namespace SkiPass {
 
     std::unique_ptr<IAppBuilder> SkiPassApp::load(int argc, char const *argv[])
     {
-        std::cout << "SkiPassApp::load" << std::endl;
         return std::make_unique<InMemoryAppBuilder>();
     }
 

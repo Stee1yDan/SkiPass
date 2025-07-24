@@ -19,7 +19,10 @@ namespace SkiPass
     class TicketService
     {
     public:
-        explicit TicketService(std::shared_ptr<ITicketRepository> repository, const std::shared_ptr<IStorageUnitRepository> &unit_repository);
+        explicit TicketService(const std::shared_ptr<ITicketRepository> &ticket_repository)
+            : ticket_repository_(ticket_repository) {
+        }
+
         using ticket_id_t = ITicketRepository::ticket_id_t;
 
         struct TicketInfo {
@@ -31,16 +34,6 @@ namespace SkiPass
             AbstractTicket::balance_unit_t balance;
         };
 
-
-        enum class pass_operation_status {
-            success,
-            ticket_expired,
-            no_passes_left,
-            wrong_tourniquet,
-            no_such_ticket_found,
-            operation_declined
-        };
-
         enum class ticket_management_operation_status {
             success,
             wrong_type_of_ticket,
@@ -48,14 +41,6 @@ namespace SkiPass
             operation_declined
         };
 
-        enum class storage_management_operation_status {
-            success,
-            no_such_ticket_found,
-            no_storage_unit_found,
-            storage_unit_is_already_locked,
-            storage_unit_is_already_opened,
-            operation_declined
-        };
 
         enum class balance_operation_status {
             success,
@@ -71,10 +56,6 @@ namespace SkiPass
             unsigned change;
         };
 
-        struct StorageOperation {
-            storage_management_operation_status status;
-            std::shared_ptr<StorageUnit> unit;
-        };
 
         std::size_t ticket_id_{};
 
@@ -83,22 +64,15 @@ namespace SkiPass
         [[nodiscard]] std::shared_ptr<AbstractTicket> add_ticket(std::shared_ptr<AbstractTicket> ticket);
         [[nodiscard]] ticket_management_operation_status delete_ticket(AbstractTicket::ticket_id_t ticket);
         [[nodiscard]] std::optional<std::shared_ptr<AbstractTicket>> get_ticket(AbstractTicket::ticket_id_t id);
-        [[nodiscard]] pass_operation_status pass_through_tourniquet(AbstractTicket::ticket_id_t id, unsigned tourniquet_id) const;
-        [[nodiscard]] pass_operation_status can_pass_through_tourniquet(AbstractTicket::ticket_id_t id, unsigned tourniquet_id) const;
         [[nodiscard]] ticket_management_operation_status change_owner(AbstractTicket::ticket_id_t id, std::string new_name) const;
         [[nodiscard]] BalanceOperation extend_ticket(AbstractTicket::ticket_id_t id, int extension_units, int funds) const;
-        [[nodiscard]] StorageOperation get_linked_storage_unit(AbstractTicket::ticket_id_t ticket);
-        [[nodiscard]] StorageOperation lock_storage_unit(AbstractTicket::ticket_id_t ticket);
-        [[nodiscard]] StorageOperation open_storage_unit(AbstractTicket::ticket_id_t ticket);
         [[nodiscard]] static std::unordered_map<AbstractTicket::TicketType, unsigned> get_extension_prices();
         [[nodiscard]] static TicketInfo get_ticket_info_struct(const std::shared_ptr<AbstractTicket>& ticket);
 
         [[nodiscard]] std::shared_ptr<ITicketRepository> get_ticket_repository();
-        [[nodiscard]] std::shared_ptr<IStorageUnitRepository> get_storage_unit_repository();
 
     private:
         std::shared_ptr<ITicketRepository> ticket_repository_;
-        std::shared_ptr<IStorageUnitRepository> storage_unit_repository_;
         static const std::unordered_map<AbstractTicket::TicketType, unsigned> ticket_extension_prices_;
     };
 }

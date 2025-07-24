@@ -18,11 +18,6 @@
 
 namespace SkiPass {
 
-    CLIController::CLIController(std::shared_ptr<TicketService> service, std::shared_ptr<IView> view) {
-        service_ = service;
-        view_ = view;
-    };
-
     CLIController::~CLIController() = default;
 
     const std::unordered_map<std::string, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>> CLIController::ticket_types {
@@ -74,17 +69,17 @@ namespace SkiPass {
 
 
     void CLIController::on_show_all_tickets() {
-        view_->show_all_tickets(service_->get_ticket_repository());
+        view_->show_all_tickets(ticket_service_->get_ticket_repository());
     }
 
     void CLIController::on_show_all_storage_units() {
-        view_->show_all_storage_units(service_->get_storage_unit_repository());
+        view_->show_all_storage_units(storage_service_->get_storage_unit_repository());
     }
 
     void CLIController::on_show_ticket_info() {
         try {
             auto id = get_input<AbstractTicket::ticket_id_t>("Enter ticket id: ");
-            auto ticket = service_->get_ticket(id);
+            auto ticket = ticket_service_->get_ticket(id);
             if (ticket.has_value()) {
                 view_->show_ticket_info(SkiPass::TicketService::get_ticket_info_struct(ticket.value()));
             }
@@ -107,7 +102,13 @@ namespace SkiPass {
             }
 
             std::shared_ptr<AbstractTicket> ticket = ticket_types.at(ticket_type)(*this);
-            auto saved_ticket = service_->add_ticket(ticket);
+            auto saved_ticket = ticket_service_->add_ticket(ticket);
+
+            if (saved_ticket->get_ticket_type() != AbstractTicket::TicketType::SERVICE) {
+                auto storage_unit = std::make_shared<StorageUnit>(0, saved_ticket->get_id());
+                auto saved_storage_unit = storage_service_->add_storage_unit(storage_unit);
+            }
+
             view_->show_ticket_info(SkiPass::TicketService::get_ticket_info_struct(saved_ticket));
         } catch (const std::exception& e) {
             view_->show_error(std::string("Error: ") + e.what());
@@ -117,13 +118,24 @@ namespace SkiPass {
     void CLIController::on_delete_ticket() {
         try {
             auto id = get_input<AbstractTicket::ticket_id_t>("Enter id of ticket to delete: ");
-            auto operation_status = service_->delete_ticket(id);
+            auto operation_status = ticket_service_->delete_ticket(id);
+
+            if (operation_status == TicketService::ticket_management_operation_status::no_such_ticket_found) {
+                view_->show_message(std::format("The ticket with is not found", id));
+            }
+
+            auto storage_operation = storage_service_->get_linked_storage_unit(id);
+
+            storage_service_->delete_storage_unit(storage_operation.unit->get_storage_unit_id());
+
+            if (storage_operation.status == StorageService::storage_management_operation_status::no_storage_unit_found) {
+                view_->show_message(std::format("The storage unit with id {} is deleted", storage_operation.unit->get_storage_unit_id()));
+            }
+
             if (operation_status == TicketService::ticket_management_operation_status::success) {
                 view_->show_message(std::format("The ticket with id {} is deleted", id));
             }
-            else if (operation_status == TicketService::ticket_management_operation_status::no_such_ticket_found) {
-                view_->show_message(std::format("The ticket with is not found", id));
-            }
+
         }
         catch (const std::exception& e) {
             view_->show_error(std::string("Error: ") + e.what());
@@ -134,10 +146,11 @@ namespace SkiPass {
     void CLIController::on_check_balance() {
         try {
             auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
-            auto ticket = service_->get_ticket(ticket_id);
+            auto ticket = ticket_service_->get_ticket(ticket_id);
 
             if (!ticket.has_value()) {
                 view_->show_message("No such ticket found!");
+                return;
             }
 
             std::shared_ptr<ExtendableTicket> extendedTicket = std::dynamic_pointer_cast<ExtendableTicket>(ticket.value());
@@ -180,12 +193,12 @@ namespace SkiPass {
     void CLIController::on_show_linked_storage_unit() {
         try {
             auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
-            auto operation_status = service_->get_linked_storage_unit(ticket_id);
+            auto operation_status = storage_service_->get_linked_storage_unit(ticket_id);
 
-            if (operation_status.status == TicketService::storage_management_operation_status::no_storage_unit_found) {
+            if (operation_status.status == StorageService::storage_management_operation_status::no_storage_unit_found) {
                 view_->show_message(std::format("No storage for ticket with id {} is found!", ticket_id));
             }
-            else if (operation_status.status == TicketService::storage_management_operation_status::success) {
+            else if (operation_status.status == StorageService::storage_management_operation_status::success) {
                 view_->show_storage_unit(operation_status.unit);
             }
         } catch (const std::exception& e) {
@@ -196,15 +209,15 @@ namespace SkiPass {
     void CLIController::on_open_storage_unit() {
         try {
             auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
-            auto operation_status = service_->open_storage_unit(ticket_id);
+            auto operation_status = storage_service_->open_storage_unit(ticket_id);
 
-            if (operation_status.status == TicketService::storage_management_operation_status::no_storage_unit_found) {
+            if (operation_status.status == StorageService::storage_management_operation_status::no_storage_unit_found) {
                 view_->show_message(std::format("No storage for ticket with id {} is found!", ticket_id));
             }
-            if (operation_status.status == TicketService::storage_management_operation_status::storage_unit_is_already_opened) {
+            if (operation_status.status == StorageService::storage_management_operation_status::storage_unit_is_already_opened) {
                 view_->show_message("The storage unit is opened already!");
             }
-            else if (operation_status.status == TicketService::storage_management_operation_status::success) {
+            else if (operation_status.status == StorageService::storage_management_operation_status::success) {
                 view_->show_message("The storage unit was opened successfully!");
                 view_->show_storage_unit(operation_status.unit);
             }
@@ -217,15 +230,15 @@ namespace SkiPass {
     void CLIController::on_lock_storage_unit() {
         try {
             auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
-            auto operation_status = service_->lock_storage_unit(ticket_id);
+            auto operation_status = storage_service_->lock_storage_unit(ticket_id);
 
-            if (operation_status.status == TicketService::storage_management_operation_status::no_storage_unit_found) {
+            if (operation_status.status == StorageService::storage_management_operation_status::no_storage_unit_found) {
                 view_->show_message(std::format("No storage for ticket with id {} is found!", ticket_id));
             }
-            if (operation_status.status == TicketService::storage_management_operation_status::storage_unit_is_already_locked) {
+            if (operation_status.status == StorageService::storage_management_operation_status::storage_unit_is_already_locked) {
                 view_->show_message("The storage unit is locked already!");
             }
-            else if (operation_status.status == TicketService::storage_management_operation_status::success) {
+            else if (operation_status.status == StorageService::storage_management_operation_status::success) {
                 view_->show_message("The storage unit was closed successfully!");
                 view_->show_storage_unit(operation_status.unit);
             }
@@ -238,28 +251,28 @@ namespace SkiPass {
     void CLIController::on_pass() {
         try {
             auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
-            auto tourniquet_id = get_input<unsigned>("Enter tourniquet number: ");
+            auto tourniquet_id = get_input<unsigned>("Enter tourniquet  (1-5): ");
 
-            auto pass_result = service_->pass_through_tourniquet(ticket_id, tourniquet_id);
+            auto pass_result = tourniquet_service_->pass_through_tourniquet(ticket_id, tourniquet_id);
 
             switch (pass_result) {
-                case TicketService::pass_operation_status::no_such_ticket_found:
+                case TourniquetService::pass_operation_status::no_such_ticket_found:
                     view_->show_message(std::format("No ticket with id {} is found", ticket_id));
                     break;
 
-                case TicketService::pass_operation_status::success:
+                case TourniquetService::pass_operation_status::success:
                     view_->show_message("Passed!");
                     break;
 
-                case TicketService::pass_operation_status::no_passes_left:
+                case TourniquetService::pass_operation_status::no_passes_left:
                     view_->show_message("No passes left! Please extend your ticket!");
                     break;
 
-                case TicketService::pass_operation_status::ticket_expired:
+                case TourniquetService::pass_operation_status::ticket_expired:
                     view_->show_message("Ticket is expired! Please extend your ticket!");
                     break;
 
-                case TicketService::pass_operation_status::wrong_tourniquet:
+                case TourniquetService::pass_operation_status::wrong_tourniquet:
                     view_->show_message("Service ticket can't be used here!");
                     break;
 
@@ -277,26 +290,26 @@ namespace SkiPass {
             auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
             auto tourniquet_id = get_input<unsigned>("Enter tourniquet number: ");
 
-            auto pass_result = service_->can_pass_through_tourniquet(ticket_id, tourniquet_id);
+            auto pass_result = tourniquet_service_->can_pass_through_tourniquet(ticket_id, tourniquet_id);
 
             switch (pass_result) {
-                case TicketService::pass_operation_status::no_such_ticket_found:
+                case TourniquetService::pass_operation_status::no_such_ticket_found:
                     view_->show_message(std::format("No ticket with id {} is found", ticket_id));
                     break;
 
-                case TicketService::pass_operation_status::success:
+                case TourniquetService::pass_operation_status::success:
                     view_->show_message("You can pass!");
                     break;
 
-                case TicketService::pass_operation_status::no_passes_left:
+                case TourniquetService::pass_operation_status::no_passes_left:
                     view_->show_message("No passes left! Please extend your ticket!");
                     break;
 
-                case TicketService::pass_operation_status::ticket_expired:
+                case TourniquetService::pass_operation_status::ticket_expired:
                     view_->show_message("Ticket is expired! Please extend your ticket!");
                     break;
 
-                case TicketService::pass_operation_status::wrong_tourniquet:
+                case TourniquetService::pass_operation_status::wrong_tourniquet:
                     view_->show_message("Service ticket can't be used here!");
                     break;
 
@@ -316,7 +329,7 @@ namespace SkiPass {
             auto funds = get_input<TicketService::ticket_id_t>("Enter funds: ");
             auto extension_units = get_input<TicketService::ticket_id_t>("Enter number of days/passes needed: ");
 
-            auto res = service_->extend_ticket(ticket_id, extension_units, funds);
+            auto res = ticket_service_->extend_ticket(ticket_id, extension_units, funds);
 
             switch (res.status) {
                 case TicketService::balance_operation_status::invalid_ticket_type:
@@ -354,7 +367,7 @@ namespace SkiPass {
             auto ticket_id = get_input<TicketService::ticket_id_t>("Enter ticket ID: ");
             auto funds = get_input<std::string>("Enter new owner name: ");
 
-            auto res = service_->change_owner(ticket_id, funds);
+            auto res = ticket_service_->change_owner(ticket_id, funds);
 
             switch (res) {
                 case TicketService::ticket_management_operation_status::no_such_ticket_found:

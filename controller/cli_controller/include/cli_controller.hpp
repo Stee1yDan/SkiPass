@@ -7,14 +7,23 @@
 #include "controller.hpp"
 #include "view.hpp"
 #include "abstract_ticket.hpp"
+#include "storage_service.hpp"
 #include "ticket_service.hpp"
+#include "tourniquet_service.hpp"
 
 
 namespace SkiPass {
 
     class CLIController : public IController {
     public:
-        CLIController(std::shared_ptr<TicketService> service, std::shared_ptr<IView> view);
+        CLIController(const std::shared_ptr<TicketService> &ticket_service,
+            const std::shared_ptr<StorageService> &storage_service,
+            const std::shared_ptr<TourniquetService> &tourniquet_service, const std::shared_ptr<IView> &view)
+            : ticket_service_(ticket_service),
+              storage_service_(storage_service),
+              tourniquet_service_(tourniquet_service),
+              view_(view) {
+        }
 
         ~CLIController() override;
 
@@ -58,7 +67,9 @@ namespace SkiPass {
 
         static const std::unordered_map<std::string, std::function<std::shared_ptr<AbstractTicket>(CLIController&)>> ticket_types;
 
-        std::shared_ptr<TicketService> service_;
+        std::shared_ptr<TicketService> ticket_service_;
+        std::shared_ptr<StorageService> storage_service_;
+        std::shared_ptr<TourniquetService> tourniquet_service_;
         std::shared_ptr<IView> view_;
     };
 }

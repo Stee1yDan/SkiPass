@@ -8,6 +8,8 @@ add_library(cli_controller STATIC source/cli_controller.cpp)
 target_include_directories(cli_controller PUBLIC include)
 target_link_libraries(cli_controller PUBLIC
         ticket_service
+        storage_service
+        tourniquet_service
         unlimited_ticket
         limited_ticket
         service_ticket

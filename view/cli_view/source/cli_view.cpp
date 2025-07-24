@@ -33,8 +33,8 @@ namespace SkiPass {
 
     void CLIView::show_extension_prices(std::unordered_map<AbstractTicket::TicketType, unsigned> map) {
         std::cout << std::endl;
-        std::cout << "Price of one pass for LIMITED ticket " << map.at(AbstractTicket::TicketType::LIMITED) <<  std::endl;
-        std::cout << "Price of one day for TEMPORARY ticket " << map.at(AbstractTicket::TicketType::TEMPORARY) <<  std::endl;
+        std::cout << "Price of one pass for LIMITED ticket: \t" << map.at(AbstractTicket::TicketType::LIMITED) <<  std::endl;
+        std::cout << "Price of one day for TEMPORARY ticket: \t " << map.at(AbstractTicket::TicketType::TEMPORARY) <<  std::endl;
         std::cout << std::endl;
     }
 

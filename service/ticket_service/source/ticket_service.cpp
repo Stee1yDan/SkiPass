@@ -13,18 +13,9 @@ namespace SkiPass {
         std::pair{AbstractTicket::TicketType::TEMPORARY, 200}
     };
 
-    TicketService::TicketService(std::shared_ptr<ITicketRepository> repository, const std::shared_ptr<IStorageUnitRepository> &unit_repository) {
-        ticket_repository_ = repository;
-        storage_unit_repository_ = unit_repository;
-    }
 
     std::shared_ptr<AbstractTicket> TicketService::add_ticket(std::shared_ptr<AbstractTicket> ticket) {
         auto new_ticket  = ticket_repository_->add_ticket(std::move(ticket));
-
-        if (new_ticket->get_ticket_type() != AbstractTicket::TicketType::SERVICE) {
-            auto storage_unit = std::make_shared<StorageUnit>(0, new_ticket->get_id());
-            storage_unit_repository_->add_unit(storage_unit);
-        }
 
         return new_ticket;
     }
@@ -48,37 +39,9 @@ namespace SkiPass {
 
     TicketService::ticket_management_operation_status TicketService::delete_ticket(AbstractTicket::ticket_id_t id) {
         if (ticket_repository_->delete_ticket(id)) {
-            auto storage_unit = storage_unit_repository_->get_unit_by_ticket(id);
-            storage_unit_repository_->delete_unit(storage_unit->get()->get_storage_unit_id());
             return TicketService::ticket_management_operation_status::success;
         }
         return TicketService::ticket_management_operation_status::no_such_ticket_found;
-    }
-
-    TicketService::pass_operation_status TicketService::pass_through_tourniquet(
-        AbstractTicket::ticket_id_t id, //add tourniquet check
-        unsigned tourniquet_id) const {
-        auto ticket = ticket_repository_->get_ticket(id);
-
-        if (!ticket.has_value()) {
-            return pass_operation_status::no_such_ticket_found;
-        }
-
-        if (!ticket->get()->can_pass(tourniquet_id)) {
-            auto ticket_type = ticket->get()->get_ticket_type();
-            if (ticket_type == AbstractTicket::TicketType::LIMITED)
-                return pass_operation_status::no_passes_left;
-
-            if (ticket_type == AbstractTicket::TicketType::TEMPORARY)
-                return pass_operation_status::ticket_expired;
-
-            if (ticket_type == AbstractTicket::TicketType::SERVICE)
-                return pass_operation_status::wrong_tourniquet;
-        }
-
-        ticket->get()->pass(tourniquet_id);
-
-        return pass_operation_status::success;
     }
 
     TicketService::BalanceOperation TicketService::extend_ticket(AbstractTicket::ticket_id_t id,
@@ -124,34 +87,6 @@ namespace SkiPass {
         return BalanceOperation(balance_operation_status::operation_declined, 0);
     }
 
-    TicketService::pass_operation_status TicketService::can_pass_through_tourniquet(AbstractTicket::ticket_id_t id,
-        unsigned tourniquet_id) const {
-        auto ticket = ticket_repository_->get_ticket(id);
-
-        if (!ticket.has_value()) {
-            return pass_operation_status::no_such_ticket_found;
-        }
-
-        if (!ticket->get()->can_pass(tourniquet_id)) {
-            auto ticket_type = ticket->get()->get_ticket_type();
-            if (ticket_type == AbstractTicket::TicketType::LIMITED)
-                return pass_operation_status::no_passes_left;
-
-            if (ticket_type == AbstractTicket::TicketType::TEMPORARY)
-                return pass_operation_status::ticket_expired;
-
-            if (ticket_type == AbstractTicket::TicketType::SERVICE)
-                return pass_operation_status::wrong_tourniquet;
-        }
-
-        if (ticket->get()->can_pass(tourniquet_id)) return pass_operation_status::success;
-
-        return pass_operation_status::operation_declined;
-    }
-
-    std::shared_ptr<IStorageUnitRepository> TicketService::get_storage_unit_repository() {
-        return storage_unit_repository_;
-    }
 
     std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::get_extension_prices() {
         return ticket_extension_prices_;
@@ -178,43 +113,5 @@ namespace SkiPass {
 
         return ticket_management_operation_status::success;
 
-    }
-
-    TicketService::StorageOperation TicketService::lock_storage_unit(AbstractTicket::ticket_id_t ticket_id) {
-        auto storage_unit = storage_unit_repository_->get_unit_by_ticket(ticket_id);
-        if (!storage_unit) {
-            return StorageOperation(storage_management_operation_status::no_storage_unit_found, std::shared_ptr<StorageUnit>(nullptr));
-        }
-
-        if (storage_unit->get()->is_locked()) {
-            return  StorageOperation(storage_management_operation_status::storage_unit_is_already_locked, storage_unit.value());;
-        }
-
-        storage_unit->get()->lock_storage_unit();
-
-        return  StorageOperation(storage_management_operation_status::success, storage_unit.value());;
-    }
-
-    TicketService::StorageOperation TicketService::open_storage_unit(AbstractTicket::ticket_id_t ticket_id) {
-        auto storage_unit = storage_unit_repository_->get_unit_by_ticket(ticket_id);
-        if (!storage_unit) {
-            return StorageOperation(storage_management_operation_status::no_storage_unit_found, std::shared_ptr<StorageUnit>(nullptr));
-        }
-
-        if (!storage_unit->get()->is_locked()) {
-            return  StorageOperation(storage_management_operation_status::storage_unit_is_already_opened, storage_unit.value());;
-        }
-
-        storage_unit->get()->open_storage_unit();
-
-        return  StorageOperation(storage_management_operation_status::success, storage_unit.value());;
-    }
-
-    TicketService::StorageOperation TicketService::get_linked_storage_unit(AbstractTicket::ticket_id_t ticket_id) {
-        auto storage_unit = storage_unit_repository_->get_unit_by_ticket(ticket_id);
-        if (!storage_unit) {
-            return StorageOperation(storage_management_operation_status::no_storage_unit_found, std::shared_ptr<StorageUnit>(nullptr));
-        }
-        return  StorageOperation(storage_management_operation_status::success, storage_unit.value());;
     }
 }
