@@ -13,8 +13,8 @@ namespace SkiPass {
 
     std::shared_ptr<AbstractTicket> InMemoryTicketRepository::add_ticket(std::shared_ptr<AbstractTicket> ticket) {
         auto id = increment_ticket_id();
-        ticket->id = id;
-        tickets_.emplace(TicketKey{ticket->ticket_type, id}, ticket);
+        ticket->set_id(id);
+        tickets_.emplace(TicketKey{ticket->get_ticket_type(), id}, ticket);
         id_to_ticket_.emplace(id, ticket);  // Maintain direct ID lookup
         return ticket;
     }
@@ -26,11 +26,11 @@ namespace SkiPass {
         }
 
         auto ticket = id_it->second;
-        TicketKey key{ticket->ticket_type, id};
+        TicketKey key{ticket->get_ticket_type(), id};
 
         auto range = tickets_.equal_range(key);
         for (auto it = range.first; it != range.second; ++it) {
-            if (it->second->id == id) {
+            if (it->second->get_id() == id) {
                 tickets_.erase(it);
                 break;
             }
@@ -66,11 +66,11 @@ namespace SkiPass {
             std::shared_ptr<ExtendableTicket> extendedTicket = std::dynamic_pointer_cast<ExtendableTicket>(ticket);
 
             os << std::format("{:<10} | {:<8} | {:<20} | {:<6} | {:<10} | {:<15}\n",
-                             SkiPass::AbstractTicket::ticket_type_to_string(ticket->ticket_type),
-                             ticket->id,
-                             ticket->full_name,
-                             ticket->age,
-                             ticket->gender,
+                             SkiPass::AbstractTicket::ticket_type_to_string(ticket->get_ticket_type()),
+                             ticket->get_id(),
+                             ticket->get_full_name(),
+                             ticket->get_age(),
+                             ticket->get_gender(),
                              extendedTicket ? extendedTicket->get_balance() : "No balance for this type of ticket");
         }
         return os;

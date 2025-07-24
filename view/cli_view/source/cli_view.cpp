@@ -63,7 +63,7 @@ namespace SkiPass {
     }
 
     void CLIView::show_ticket_created(std::shared_ptr<AbstractTicket> ticket) {
-        std::cout << "Ticket Created! Its id is: " << ticket->id << std::endl;
+        std::cout << "Ticket Created! Its id is: " << ticket->get_id() << std::endl;
     }
 
     void CLIView::show_all_tickets(std::shared_ptr<ITicketRepository> repository) {

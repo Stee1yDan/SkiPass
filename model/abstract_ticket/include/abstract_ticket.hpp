@@ -36,9 +36,23 @@ namespace SkiPass {
     static bool tourniquet_exists(unsigned tourniquet_id);
     static bool is_service_tourniquet(unsigned tourniquet_id);
 
+    [[nodiscard]] ticket_id_t get_id() const;
+
+    [[nodiscard]] ticket_id_t set_id(AbstractTicket::ticket_id_t id);
+
+    [[nodiscard]] std::string get_full_name() const;
+
+    [[nodiscard]] unsigned get_age() const;
+
+    [[nodiscard]] gender_t get_gender() const;
+
+    [[nodiscard]] TicketType get_ticket_type() const;
+
     static std::string ticket_type_to_string(AbstractTicket::TicketType type);
 
     virtual ~AbstractTicket() = default;
+
+    protected:
 
     ticket_id_t id{};
     std::string full_name;

@@ -33,4 +33,29 @@ namespace SkiPass {
     bool AbstractTicket::is_service_tourniquet(unsigned tourniquet_id) {
         return AbstractTicket::service_tourniquet_registry.at(tourniquet_id);
     }
+
+    AbstractTicket::ticket_id_t AbstractTicket::get_id() const {
+        return id;
+    }
+
+    AbstractTicket::ticket_id_t AbstractTicket::set_id(AbstractTicket::ticket_id_t id) {
+        this->id = id;
+        return this->id;
+    }
+
+    std::string AbstractTicket::get_full_name() const {
+        return full_name;
+    }
+
+    unsigned AbstractTicket::get_age() const {
+        return age;
+    }
+
+    AbstractTicket::gender_t AbstractTicket::get_gender() const {
+        return gender;
+    }
+
+    AbstractTicket::TicketType AbstractTicket::get_ticket_type() const {
+        return ticket_type;
+    }
 }

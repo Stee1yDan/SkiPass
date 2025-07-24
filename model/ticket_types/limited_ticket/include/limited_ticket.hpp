@@ -30,5 +30,27 @@ namespace SkiPass {
         ~LimitedTicket() override;
 
         ExtendableTicket & operator+=(const extension_unit_t &amount) override;
+
+        LimitedTicket(const LimitedTicket &other)
+            : ExtendableTicket(other) {
+        }
+
+        LimitedTicket(LimitedTicket &&other) noexcept
+            : ExtendableTicket(std::move(other)) {
+        }
+
+        LimitedTicket & operator=(const LimitedTicket &other) {
+            if (this == &other)
+                return *this;
+            ExtendableTicket::operator =(other);
+            return *this;
+        }
+
+        LimitedTicket & operator=(LimitedTicket &&other) noexcept {
+            if (this == &other)
+                return *this;
+            ExtendableTicket::operator =(std::move(other));
+            return *this;
+        }
     };
 }

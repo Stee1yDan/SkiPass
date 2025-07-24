@@ -14,5 +14,26 @@ namespace SkiPass {
 
         ~TransferableTicket() override;
 
+        TransferableTicket(const TransferableTicket &other)
+            : AbstractTicket(other) {
+        }
+
+        TransferableTicket(TransferableTicket &&other) noexcept
+            : AbstractTicket(other) {
+        }
+
+        TransferableTicket & operator=(const TransferableTicket &other) {
+            if (this == &other)
+                return *this;
+            AbstractTicket::operator =(other);
+            return *this;
+        }
+
+        TransferableTicket & operator=(TransferableTicket &&other) noexcept {
+            if (this == &other)
+                return *this;
+            AbstractTicket::operator =(other);
+            return *this;
+        }
     };
 }

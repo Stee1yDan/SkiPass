@@ -20,5 +20,27 @@ namespace SkiPass {
         [[nodiscard]] std::shared_ptr<AbstractTicket> clone() const override;
 
         ~ServiceTicket() override = default;
+
+        ServiceTicket(const ServiceTicket &other)
+            : TransferableTicket(other) {
+        }
+
+        ServiceTicket(ServiceTicket &&other) noexcept
+            : TransferableTicket(std::move(other)) {
+        }
+
+        ServiceTicket & operator=(const ServiceTicket &other) {
+            if (this == &other)
+                return *this;
+            TransferableTicket::operator =(other);
+            return *this;
+        }
+
+        ServiceTicket & operator=(ServiceTicket &&other) noexcept {
+            if (this == &other)
+                return *this;
+            TransferableTicket::operator =(std::move(other));
+            return *this;
+        }
     };
 }

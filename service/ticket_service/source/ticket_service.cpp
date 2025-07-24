@@ -21,9 +21,9 @@ namespace SkiPass {
     std::shared_ptr<AbstractTicket> TicketService::add_ticket(std::shared_ptr<AbstractTicket> ticket) {
         auto new_ticket  = ticket_repository_->add_ticket(std::move(ticket));
 
-        if (new_ticket.get()->ticket_type != AbstractTicket::TicketType::SERVICE) {
-            auto storage_unit = std::make_shared<StorageUnit>(0, new_ticket->id);
-            storage_unit_repository_.get()->add_unit(storage_unit);
+        if (new_ticket->get_ticket_type() != AbstractTicket::TicketType::SERVICE) {
+            auto storage_unit = std::make_shared<StorageUnit>(0, new_ticket->get_id());
+            storage_unit_repository_->add_unit(storage_unit);
         }
 
         return new_ticket;
@@ -35,11 +35,11 @@ namespace SkiPass {
 
     TicketService::TicketInfo TicketService::get_ticket_info_struct(const std::shared_ptr<AbstractTicket> &ticket) {
         TicketInfo ticket_info;
-        ticket_info.full_name = ticket->full_name;
-        ticket_info.age = ticket->age;
-        ticket_info.gender = ticket->gender;
-        ticket_info.ticket_type = ticket->ticket_type;
-        ticket_info.ticket_id = ticket->id;
+        ticket_info.full_name = ticket->get_full_name();
+        ticket_info.age = ticket->get_age();
+        ticket_info.gender = ticket->get_gender();
+        ticket_info.ticket_type = ticket->get_ticket_type();
+        ticket_info.ticket_id = ticket->get_id();
         return ticket_info;
     }
 
@@ -65,7 +65,7 @@ namespace SkiPass {
         }
 
         if (!ticket->get()->can_pass(tourniquet_id)) {
-            auto ticket_type = ticket->get()->ticket_type;
+            auto ticket_type = ticket->get()->get_ticket_type();
             if (ticket_type == AbstractTicket::TicketType::LIMITED)
                 return pass_operation_status::no_passes_left;
 
@@ -100,8 +100,10 @@ namespace SkiPass {
 
         auto funds_needed = 0;
 
-        if (ticket_extension_prices_.contains(ticket->get()->ticket_type)) {
-            funds_needed = extension_units * ticket_extension_prices_.at(ticket->get()->ticket_type);
+        auto current_ticket_type = ticket->get()->get_ticket_type();
+
+        if (ticket_extension_prices_.contains(current_ticket_type)) {
+            funds_needed = extension_units * ticket_extension_prices_.at(current_ticket_type);
         } else {
             return BalanceOperation(balance_operation_status::invalid_ticket_type, 0);
         }
@@ -131,7 +133,7 @@ namespace SkiPass {
         }
 
         if (!ticket->get()->can_pass(tourniquet_id)) {
-            auto ticket_type = ticket->get()->ticket_type;
+            auto ticket_type = ticket->get()->get_ticket_type();
             if (ticket_type == AbstractTicket::TicketType::LIMITED)
                 return pass_operation_status::no_passes_left;
 
