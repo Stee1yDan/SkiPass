@@ -3,8 +3,6 @@
 #include "view.hpp"
 
 namespace SkiPass {
-    class ExtendableTicket;
-
     class CLIView : public IView{
     public:
 

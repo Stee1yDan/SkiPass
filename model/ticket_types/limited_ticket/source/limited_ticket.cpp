@@ -4,9 +4,10 @@
 
 bool SkiPass::LimitedTicket::pass(unsigned tourniquet_id) {
     try {
+        if (!can_pass(tourniquet_id)) return false;
         auto balance_unit = std::stoll(balance_);
         balance_ = std::to_string(--balance_unit);
-        return tourniquet_exists(tourniquet_id);
+        return true;
     }
     catch (const std::exception& e) {
         return false;

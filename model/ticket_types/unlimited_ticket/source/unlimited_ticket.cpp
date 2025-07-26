@@ -2,7 +2,7 @@
 
 namespace SkiPass {
     bool UnlimitedTicket::pass(unsigned tourniquet_id) {
-        return tourniquet_exists(tourniquet_id);
+        return can_pass(tourniquet_id);
     }
 
     bool UnlimitedTicket::can_pass(unsigned tourniquet_id) {

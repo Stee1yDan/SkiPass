@@ -5,10 +5,10 @@
 #include "abstract_ticket.hpp"
 #include "extendable_ticket.hpp"
 #include "in_memory_ticket_repository.hpp"
+#include "in_memory_storage_unit_repository.hpp"
 
 #include <iostream>
 
-#include "../../../repository/storage_unit_repository/in_memory_storage_unit_repository/include/in_memory_storage_unit_repository.hpp"
 
 
 namespace SkiPass {

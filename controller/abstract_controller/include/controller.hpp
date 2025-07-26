@@ -26,4 +26,4 @@ namespace SkiPass {
         virtual void on_show_all_storage_units() = 0;
     };
 
-} // namespace banking
+}

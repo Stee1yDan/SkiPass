@@ -4,7 +4,7 @@
 #include <chrono>
 
 bool SkiPass::TemporaryTicket::pass(unsigned tourniquet_id) {
-    return tourniquet_exists(tourniquet_id);
+    return can_pass(tourniquet_id);
 }
 
 bool SkiPass::TemporaryTicket::can_pass(unsigned tourniquet_id) {

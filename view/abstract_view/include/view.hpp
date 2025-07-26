@@ -6,7 +6,6 @@
 #include "abstract_storage_unit_repository.hpp"
 #include "abstract_ticket.hpp"
 #include "extendable_ticket.hpp"
-#include "abstract_ticket.hpp"
 #include "abstract_ticket_repository.hpp"
 #include "storage_unit.hpp"
 
@@ -26,4 +25,4 @@ namespace SkiPass {
         virtual void show_all_storage_units(std::shared_ptr<IStorageUnitRepository> repository) = 0;
     };
 
-} // namespace banking
+}

@@ -27,7 +27,6 @@ namespace SkiPass {
 
         ~CLIController() override;
 
-
         void run() override;
 
         void on_create_ticket() override;
