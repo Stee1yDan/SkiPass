@@ -12,7 +12,7 @@ namespace SkiPass {
 
         [[nodiscard]] unit_id_t get_storage_unit_id() const;
 
-        bool is_locked() const;
+        [[nodiscard]] bool is_locked() const;
 
         void lock_storage_unit();
 

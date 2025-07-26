@@ -12,7 +12,7 @@ namespace SkiPass {
 
         void show_balance(std::shared_ptr<ExtendableTicket> ticket) override;
 
-        void show_ticket_info(TicketService::TicketInfo ticket_info) override;
+        void show_ticket_info(std::shared_ptr<AbstractTicket> ticket) override;
 
         void show_message(const std::string &message) override;
 

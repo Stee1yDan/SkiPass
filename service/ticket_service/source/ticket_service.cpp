@@ -3,9 +3,8 @@
 #include <utility>
 
 #include "abstract_storage_unit_repository.hpp"
-#include "storage_unit.hpp"
 #include "extendable_ticket.hpp"
-#include "../../../model/transferable_ticket/include/transferable_ticket.hpp"
+#include "transferable_ticket.hpp"
 
 namespace SkiPass {
     const std::unordered_map<AbstractTicket::TicketType, unsigned> TicketService::ticket_extension_prices_{
@@ -22,16 +21,6 @@ namespace SkiPass {
 
     std::optional<std::shared_ptr<AbstractTicket> > TicketService::get_ticket(AbstractTicket::ticket_id_t id) {
         return ticket_repository_->get_ticket(id);
-    }
-
-    TicketService::TicketInfo TicketService::get_ticket_info_struct(const std::shared_ptr<AbstractTicket> &ticket) {
-        TicketInfo ticket_info;
-        ticket_info.full_name = ticket->get_full_name();
-        ticket_info.age = ticket->get_age();
-        ticket_info.gender = ticket->get_gender();
-        ticket_info.ticket_type = ticket->get_ticket_type();
-        ticket_info.ticket_id = ticket->get_id();
-        return ticket_info;
     }
 
     TicketService::TicketService(ITicketRepository &repository) {

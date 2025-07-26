@@ -16,12 +16,12 @@ namespace SkiPass {
                         unsigned age,
                         const gender &gender,
                         TicketType,
-                        const balance& balance)
+                        const balance_unit_t& balance)
             : ExtendableTicket(id, full_name, age, gender, TicketType::TEMPORARY, balance) {}
 
         [[nodiscard]] bool extend_ticket(extension_unit_t value) override;
 
-        [[nodiscard]] balance get_balance() override;
+        [[nodiscard]] balance_unit_t get_balance() override;
 
         [[nodiscard]] std::shared_ptr<AbstractTicket> clone() const override;
 

@@ -11,14 +11,15 @@ namespace SkiPass {
             : AbstractTicket(id, full_name, age, gender, ticket_type), balance_(std::move(balance)) {
         }
 
-        using balance = std::string;
+        using balance_unit_t = std::string;
+        using extension_unit_t = long long;
 
         virtual bool extend_ticket(extension_unit_t value) = 0;
 
-        virtual balance get_balance() = 0;
+        virtual balance_unit_t get_balance() = 0;
 
-        [[nodiscard]] balance get_balance() const;
-        void set_balance(const balance &balance);
+        [[nodiscard]] balance_unit_t get_balance() const;
+        void set_balance(const balance_unit_t &balance);
 
         virtual ExtendableTicket& operator+=(const extension_unit_t& amount);
 
@@ -51,7 +52,7 @@ namespace SkiPass {
         }
 
     protected:
-        balance balance_;
+        balance_unit_t balance_;
 
     };
 }

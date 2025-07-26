@@ -18,15 +18,15 @@ namespace SkiPass {
         std::cout << "Current balance: " << ticket->get_balance() << std::endl;
     }
 
-    void CLIView::show_ticket_info(TicketService::TicketInfo ticket_info) {
+    void CLIView::show_ticket_info(std::shared_ptr<AbstractTicket> ticket) {
         std::cout << std::endl;
         std::cout << "+-----Owner Info------" <<  std::endl;
-        std::cout << "|Full Name: " << ticket_info.full_name << std::endl;
-        std::cout << "|Gender: " << ticket_info.gender << std::endl;
-        std::cout << "|Age: " << ticket_info.age << std::endl;
+        std::cout << "|Full Name: " << ticket->get_full_name() << std::endl;
+        std::cout << "|Gender: " << ticket->get_gender() << std::endl;
+        std::cout << "|Age: " << ticket->get_age() << std::endl;
         std::cout << "+-----Ticket Info-----" <<  std::endl;
-        std::cout << "|Ticket Id: " << ticket_info.ticket_id << std::endl;
-        std::cout << "|Ticket Type: " << ticket_info.ticket_type << std::endl;
+        std::cout << "|Ticket Id: " << ticket->get_id() << std::endl;
+        std::cout << "|Ticket Type: " << ticket->get_ticket_type() << std::endl;
         std::cout << "+----------------------" <<  std::endl;
         std::cout << std::endl;
     }

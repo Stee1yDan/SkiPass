@@ -2,6 +2,7 @@
 
 #include <abstract_ticket_repository.hpp>
 #include <abstract_ticket.hpp>
+#include <abstract_ticket_repository.hpp>
 
 #include <optional>
 #include <random>
@@ -14,8 +15,6 @@
 
 namespace SkiPass
 {
-    class IStorageUnitRepository;
-
     class TicketService
     {
     public:
@@ -24,15 +23,6 @@ namespace SkiPass
         }
 
         using ticket_id_t = ITicketRepository::ticket_id_t;
-
-        struct TicketInfo {
-            std::string full_name;
-            AbstractTicket::gender gender;
-            unsigned age;
-            AbstractTicket::ticket_id_t ticket_id;
-            AbstractTicket::TicketType ticket_type;
-            AbstractTicket::balance_unit_t balance;
-        };
 
         enum class ticket_management_operation_status {
             success,
@@ -67,7 +57,6 @@ namespace SkiPass
         [[nodiscard]] ticket_management_operation_status change_owner(AbstractTicket::ticket_id_t id, std::string new_name) const;
         [[nodiscard]] BalanceOperation extend_ticket(AbstractTicket::ticket_id_t id, int extension_units, int funds) const;
         [[nodiscard]] static std::unordered_map<AbstractTicket::TicketType, unsigned> get_extension_prices();
-        [[nodiscard]] static TicketInfo get_ticket_info_struct(const std::shared_ptr<AbstractTicket>& ticket);
 
         [[nodiscard]] std::shared_ptr<ITicketRepository> get_ticket_repository();
 

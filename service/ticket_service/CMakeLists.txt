@@ -10,4 +10,5 @@ target_link_libraries(ticket_service PUBLIC
         abstract_ticket
         abstract_storage_unit_repository
         ticket_repository
-        extendable_ticket)
+        extendable_ticket
+        transferable_ticket)

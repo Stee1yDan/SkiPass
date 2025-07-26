@@ -81,7 +81,7 @@ namespace SkiPass {
             auto id = get_input<AbstractTicket::ticket_id_t>("Enter ticket id: ");
             auto ticket = ticket_service_->get_ticket(id);
             if (ticket.has_value()) {
-                view_->show_ticket_info(SkiPass::TicketService::get_ticket_info_struct(ticket.value()));
+                view_->show_ticket_info(ticket.value());
             }
             else {
                 view_->show_message("No such ticket found!");
@@ -109,7 +109,7 @@ namespace SkiPass {
                 auto saved_storage_unit = storage_service_->add_storage_unit(storage_unit);
             }
 
-            view_->show_ticket_info(SkiPass::TicketService::get_ticket_info_struct(saved_ticket));
+            view_->show_ticket_info(saved_ticket);
         } catch (const std::exception& e) {
             view_->show_error(std::string("Error: ") + e.what());
         }

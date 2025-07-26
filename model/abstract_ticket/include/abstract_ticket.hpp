@@ -15,7 +15,7 @@ namespace SkiPass {
         SERVICE};
 
     using gender = std::string;
-    using extension_unit_t = long long;
+
     using balance_unit_t = std::string;
     using ticket_id_t = unsigned int;
 

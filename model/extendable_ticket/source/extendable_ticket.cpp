@@ -7,11 +7,7 @@ namespace SkiPass {
         return *this;
     };
 
-    ExtendableTicket::balance ExtendableTicket::get_balance() const {
+    ExtendableTicket::balance_unit_t ExtendableTicket::get_balance() const {
         return this->balance_;
-    }
-
-    void ExtendableTicket::set_balance(const balance &balance) {
-        this->balance_ = balance;
     }
 }
