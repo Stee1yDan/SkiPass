@@ -26,7 +26,5 @@ namespace SkiPass {
         ITicketRepository() = default;
 
         virtual ~ITicketRepository() = default;
-
-        std::multimap<TicketKey, std::shared_ptr<AbstractTicket>> tickets_;
     };
 }

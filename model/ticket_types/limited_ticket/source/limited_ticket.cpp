@@ -4,8 +4,8 @@
 
 bool SkiPass::LimitedTicket::pass(unsigned tourniquet_id) {
     try {
-        auto balance_unit = std::stoll(balance);
-        balance = std::to_string(--balance_unit);
+        auto balance_unit = std::stoll(balance_);
+        balance_ = std::to_string(--balance_unit);
         return tourniquet_exists(tourniquet_id);
     }
     catch (const std::exception& e) {
@@ -14,14 +14,14 @@ bool SkiPass::LimitedTicket::pass(unsigned tourniquet_id) {
 }
 
 bool SkiPass::LimitedTicket::can_pass(unsigned tourniquet_id) {
-    return std::stoll(balance) > 0 && AbstractTicket::tourniquet_exists(tourniquet_id);;
+    return std::stoll(balance_) > 0 && AbstractTicket::tourniquet_exists(tourniquet_id);;
 }
 
 bool SkiPass::LimitedTicket::extend_ticket(extension_unit_t value) {
     try {
-        long long balance_unit = std::stoll(balance);
+        long long balance_unit = std::stoll(balance_);
         balance_unit += value;
-        balance = std::to_string(balance_unit);
+        balance_ = std::to_string(balance_unit);
         return true;
     }
     catch (const std::exception& e) {
@@ -36,11 +36,11 @@ SkiPass::ExtendableTicket & SkiPass::LimitedTicket::operator+=(const extension_u
 }
 
 SkiPass::AbstractTicket::balance_unit_t SkiPass::LimitedTicket::get_balance() {
-    return std::format("Passes left - {}",balance);
+    return std::format("Passes left - {}",balance_);
 }
 
 std::shared_ptr<SkiPass::AbstractTicket> SkiPass::LimitedTicket::clone() const {
-    auto new_ticket = std::make_shared<LimitedTicket>(id, full_name, age, gender, ticket_type, balance);
+    auto new_ticket = std::make_shared<LimitedTicket>(ticket_id_t_, full_name_, age_, gender_, ticket_type_, balance_);
     return new_ticket;
 }
 

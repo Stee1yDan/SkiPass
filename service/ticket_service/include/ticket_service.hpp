@@ -27,7 +27,7 @@ namespace SkiPass
 
         struct TicketInfo {
             std::string full_name;
-            AbstractTicket::gender_t gender;
+            AbstractTicket::gender gender;
             unsigned age;
             AbstractTicket::ticket_id_t ticket_id;
             AbstractTicket::TicketType ticket_type;

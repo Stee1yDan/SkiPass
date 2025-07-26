@@ -1,6 +1,6 @@
 #pragma once
 #include "abstract_ticket.hpp"
-#include "../../../transferable_ticket/include/transferable_ticket.hpp"
+#include "transferable_ticket.hpp"
 
 
 namespace SkiPass {
@@ -13,12 +13,13 @@ namespace SkiPass {
         ServiceTicket(ticket_id_t id,
                         const std::string &full_name,
                         unsigned age,
-                        const gender_t &gender,
+                        const gender &gender,
                         TicketType)
             : TransferableTicket(id, full_name, age, gender, TicketType::SERVICE) {}
 
         [[nodiscard]] std::shared_ptr<AbstractTicket> clone() const override;
 
+        ServiceTicket() = default;
         ~ServiceTicket() override = default;
 
         ServiceTicket(const ServiceTicket &other)

@@ -13,7 +13,7 @@ namespace SkiPass {
         UnlimitedTicket(ticket_id_t id,
                         const std::string &full_name,
                         unsigned age,
-                        const gender_t &gender,
+                        const gender &gender,
                         TicketType)
             : TransferableTicket(id, full_name, age, gender, TicketType::UNLIMITED) {}
 

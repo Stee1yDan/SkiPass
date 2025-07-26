@@ -2,7 +2,7 @@
 #include <chrono>
 
 #include "abstract_ticket.hpp"
-#include "../../../extendable_ticket/include/extendable_ticket.hpp"
+#include "extendable_ticket.hpp"
 
 namespace SkiPass {
     class TemporaryTicket : public ExtendableTicket {
@@ -14,14 +14,14 @@ namespace SkiPass {
         TemporaryTicket(ticket_id_t id,
                         const std::string &full_name,
                         unsigned age,
-                        const gender_t &gender,
+                        const gender &gender,
                         TicketType,
-                        const balance_unit_t& balance)
+                        const balance& balance)
             : ExtendableTicket(id, full_name, age, gender, TicketType::TEMPORARY, balance) {}
 
         [[nodiscard]] bool extend_ticket(extension_unit_t value) override;
 
-        [[nodiscard]] balance_unit_t get_balance() override;
+        [[nodiscard]] balance get_balance() override;
 
         [[nodiscard]] std::shared_ptr<AbstractTicket> clone() const override;
 

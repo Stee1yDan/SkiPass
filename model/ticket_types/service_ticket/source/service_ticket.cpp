@@ -9,6 +9,6 @@ bool SkiPass::ServiceTicket::can_pass(unsigned tourniquet_id) {
 }
 
 std::shared_ptr<SkiPass::AbstractTicket> SkiPass::ServiceTicket::clone() const {
-    auto new_ticket = std::make_shared<ServiceTicket>(id, full_name, age, gender, ticket_type);
+    auto new_ticket = std::make_shared<ServiceTicket>(ticket_id_t_, full_name_, age_, gender_, ticket_type_);
     return new_ticket;
 }

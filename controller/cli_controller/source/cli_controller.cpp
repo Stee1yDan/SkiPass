@@ -394,14 +394,14 @@ namespace SkiPass {
     std::shared_ptr<AbstractTicket> CLIController::create_unlimited() {
         auto name = get_input<std::string>("Enter your name: ");
         auto age = get_input<unsigned>("Enter your age: ");
-        auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
+        auto gender = get_input<AbstractTicket::gender>("Enter your gender: ");
         return std::make_shared<UnlimitedTicket>(0,name,age,gender,AbstractTicket::TicketType::UNLIMITED);
     }
 
     std::shared_ptr<AbstractTicket> CLIController::create_limited() {
         auto name = get_input<std::string>("Enter your name: ");
         auto age = get_input<unsigned>("Enter your age: ");
-        auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
+        auto gender = get_input<AbstractTicket::gender>("Enter your gender: ");
         AbstractTicket::balance_unit_t balance = "0";
         return std::make_shared<LimitedTicket>(0,name,age,gender,AbstractTicket::TicketType::LIMITED, balance);
     }
@@ -409,14 +409,14 @@ namespace SkiPass {
     std::shared_ptr<AbstractTicket> CLIController::create_service() {
         auto name = get_input<std::string>("Enter your name: ");
         auto age = get_input<unsigned>("Enter your age: ");
-        auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
+        auto gender = get_input<AbstractTicket::gender>("Enter your gender: ");
         return std::make_shared<ServiceTicket>(0,name,age,gender,AbstractTicket::TicketType::SERVICE);
     }
 
     std::shared_ptr<AbstractTicket> CLIController::create_temporary() {
         auto name = get_input<std::string>("Enter your name: ");
         auto age = get_input<unsigned>("Enter your age: ");
-        auto gender = get_input<AbstractTicket::gender_t>("Enter your gender: ");
+        auto gender = get_input<AbstractTicket::gender>("Enter your gender: ");
 
         auto balance = TimeUtils::convert_date_to_string(TimeUtils::get_current_date());
         return std::make_shared<TemporaryTicket>(0,name,age,gender,AbstractTicket::TicketType::TEMPORARY, balance);

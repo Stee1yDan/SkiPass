@@ -8,4 +8,4 @@ add_library(temporary_ticket STATIC source/temporary_ticket.cpp)
 target_include_directories(temporary_ticket PUBLIC
         include)
 
-target_link_libraries(temporary_ticket PUBLIC abstract_ticket time_utils)
+target_link_libraries(temporary_ticket PUBLIC abstract_ticket extendable_ticket time_utils)

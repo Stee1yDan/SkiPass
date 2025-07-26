@@ -35,27 +35,27 @@ namespace SkiPass {
     }
 
     AbstractTicket::ticket_id_t AbstractTicket::get_id() const {
-        return id;
+        return ticket_id_t_;
     }
 
     AbstractTicket::ticket_id_t AbstractTicket::set_id(AbstractTicket::ticket_id_t id) {
-        this->id = id;
-        return this->id;
+        this->ticket_id_t_ = id;
+        return this->ticket_id_t_;
     }
 
     std::string AbstractTicket::get_full_name() const {
-        return full_name;
+        return full_name_;
     }
 
     unsigned AbstractTicket::get_age() const {
-        return age;
+        return age_;
     }
 
-    AbstractTicket::gender_t AbstractTicket::get_gender() const {
-        return gender;
+    AbstractTicket::gender AbstractTicket::get_gender() const {
+        return gender_;
     }
 
     AbstractTicket::TicketType AbstractTicket::get_ticket_type() const {
-        return ticket_type;
+        return ticket_type_;
     }
 }

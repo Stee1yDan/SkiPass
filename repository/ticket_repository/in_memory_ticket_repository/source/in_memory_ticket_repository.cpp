@@ -11,11 +11,16 @@ namespace SkiPass {
         return ticket_id_t_;
     }
 
+    std::multimap<ITicketRepository::TicketKey, std::shared_ptr<AbstractTicket>> InMemoryTicketRepository::
+    get_all_tickets() {
+        return tickets_;
+    }
+
     std::shared_ptr<AbstractTicket> InMemoryTicketRepository::add_ticket(std::shared_ptr<AbstractTicket> ticket) {
         auto id = increment_ticket_id();
         ticket->set_id(id);
         tickets_.emplace(TicketKey{ticket->get_ticket_type(), id}, ticket);
-        id_to_ticket_.emplace(id, ticket);  // Maintain direct ID lookup
+        id_to_ticket_.emplace(id, ticket);
         return ticket;
     }
 
@@ -56,7 +61,7 @@ namespace SkiPass {
         return result;
     }
 
-    std::ostream& operator<<(std::ostream& os, const ITicketRepository& repo) {
+    std::ostream& operator<<(std::ostream& os, const InMemoryTicketRepository& repo) {
         os << std::format("{:<10} | {:<8} | {:<20} | {:<6} | {:<10} | {:<15}\n",
                          "Type", "ID", "Name", "Age", "Gender", "Balance");
         os << std::string(80, '-') << '\n';
