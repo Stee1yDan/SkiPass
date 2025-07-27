@@ -95,6 +95,11 @@ namespace SkiPass {
 
     void CLIController::on_create_ticket() {
         try {
+            view_->show_message("Available ticket types:");
+            view_->show_message("\tUNLIMITED");
+            view_->show_message("\tLIMITED");
+            view_->show_message("\tSERVICE");
+            view_->show_message("\tTEMPORARY");
             auto ticket_type = get_input<std::string>("Enter ticket type: ");
 
             for (char &c : ticket_type) {
@@ -392,30 +397,54 @@ namespace SkiPass {
     }
 
     std::shared_ptr<AbstractTicket> CLIController::create_unlimited() {
+        auto age = -1;
         auto name = get_input<std::string>("Enter your name: ");
-        auto age = get_input<unsigned>("Enter your age: ");
+
+        while (age < 0) {
+            age = get_input<unsigned int>("Enter your age: ");
+            if (age < 0) view_->show_message("Invalid age!");
+        }
+
         auto gender = get_input<AbstractTicket::gender>("Enter your gender: ");
         return std::make_shared<UnlimitedTicket>(0,name,age,gender,AbstractTicket::TicketType::UNLIMITED);
     }
 
     std::shared_ptr<AbstractTicket> CLIController::create_limited() {
+        auto age = -1;
         auto name = get_input<std::string>("Enter your name: ");
-        auto age = get_input<unsigned>("Enter your age: ");
+
+        while (age < 0) {
+            age = get_input<unsigned int>("Enter your age: ");
+            if (age < 0) view_->show_message("Invalid age!");
+        }
+
         auto gender = get_input<AbstractTicket::gender>("Enter your gender: ");
         AbstractTicket::balance_unit_t balance = "0";
         return std::make_shared<LimitedTicket>(0,name,age,gender,AbstractTicket::TicketType::LIMITED, balance);
     }
 
     std::shared_ptr<AbstractTicket> CLIController::create_service() {
+        auto age = -1;
         auto name = get_input<std::string>("Enter your name: ");
-        auto age = get_input<unsigned>("Enter your age: ");
+
+        while (age < 0) {
+            age = get_input<unsigned int>("Enter your age: ");
+            if (age < 0) view_->show_message("Invalid age!");
+        }
+
         auto gender = get_input<AbstractTicket::gender>("Enter your gender: ");
         return std::make_shared<ServiceTicket>(0,name,age,gender,AbstractTicket::TicketType::SERVICE);
     }
 
     std::shared_ptr<AbstractTicket> CLIController::create_temporary() {
+        auto age = -1;
         auto name = get_input<std::string>("Enter your name: ");
-        auto age = get_input<unsigned>("Enter your age: ");
+
+        while (age < 0) {
+            age = get_input<unsigned int>("Enter your age: ");
+            if (age < 0) view_->show_message("Invalid age!");
+        }
+
         auto gender = get_input<AbstractTicket::gender>("Enter your gender: ");
 
         auto balance = TimeUtils::convert_date_to_string(TimeUtils::get_current_date());
