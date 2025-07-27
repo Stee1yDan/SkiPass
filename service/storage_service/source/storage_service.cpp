@@ -24,11 +24,11 @@ namespace SkiPass {
             return StorageOperation(storage_management_operation_status::no_storage_unit_found, std::shared_ptr<StorageUnit>(nullptr));
         }
 
-        if (!storage_unit->get()->is_locked()) {
-            return  StorageOperation(storage_management_operation_status::storage_unit_is_already_opened, storage_unit.value());;
+        if (storage_unit->get()->is_locked()) {
+            return  StorageOperation(storage_management_operation_status::storage_unit_is_already_locked, storage_unit.value());;
         }
 
-        storage_unit->get()->open_storage_unit();
+        storage_unit->get()->lock_storage_unit();
 
         return  StorageOperation(storage_management_operation_status::success, storage_unit.value());;
     }
@@ -38,6 +38,13 @@ namespace SkiPass {
         if (!storage_unit) {
             return StorageOperation(storage_management_operation_status::no_storage_unit_found, std::shared_ptr<StorageUnit>(nullptr));
         }
+
+        if (!storage_unit->get()->is_locked()) {
+            return  StorageOperation(storage_management_operation_status::storage_unit_is_already_opened, storage_unit.value());;
+        }
+
+        storage_unit->get()->open_storage_unit();
+
         return  StorageOperation(storage_management_operation_status::success, storage_unit.value());;
     }
 
