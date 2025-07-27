@@ -21,4 +21,4 @@ public:
     virtual std::shared_ptr<IView> build_view() = 0;
 };
 
-} // namespace banking
+}

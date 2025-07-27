@@ -1,4 +1,3 @@
-
 #include "abstract_ticket.hpp"
 #include "abstract_ticket_repository.hpp"
 

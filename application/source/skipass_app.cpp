@@ -7,9 +7,6 @@
 
 #include "in_memory_ticket_repository.hpp"
 #include "in_memory_storage_unit_repository.hpp"
-#include "abstract_ticket.hpp"
-#include "unlimited_ticket.hpp"
-
 
 namespace SkiPass {
     int SkiPassApp::run(int argc, char const *argv[]) {
@@ -22,10 +19,6 @@ namespace SkiPass {
         std::shared_ptr<StorageService> storage_service = builder->build_storage_service(storage_repository);
         std::shared_ptr<TourniquetService> tourniquet_service = builder->build_tourniquet_service(ticket_repository);
         std::shared_ptr<IController> cli_controller = builder->build_controller(ticket_service,storage_service,tourniquet_service,view);
-        // auto ticket1 = std::make_shared<UnlimitedTicket>("fio",21,"M", AbstractTicket::TicketType::UNLIMITED);
-        // auto ticket2 = std::make_shared<UnlimitedTicket>("fio",22,"M", AbstractTicket::TicketType::UNLIMITED);
-        // ticket_service->add_ticket(ticket1);
-        // ticket_service->add_ticket(ticket2);
         cli_controller->run();
         return 0;
     }
